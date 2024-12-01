@@ -101,6 +101,18 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- JB options
+-- Only show status bar on current window
+vim.opt.laststatus = 3
+-- Prevent comments continuing on new line
+vim.cmd [[autocmd FileType * set formatoptions-=ro]]
+-- Launch Telescope oldfiles on startup
+vim.cmd [[autocmd VimEnter * Telescope oldfiles]]
+-- Folding
+vim.opt.foldlevel = 99 -- Start with all folds open
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -164,7 +176,7 @@ vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- JB additions
+-- JB keymaps
 -- Remap Ctrl-i to move up by half a page
 vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', { noremap = true, silent = true })
 -- Map 'jj' to exit insert mode
@@ -174,10 +186,6 @@ vim.keymap.set('n', '<D-i>', ':CopilotChat<CR>', { noremap = true, silent = true
 -- Telescope file explorer
 vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch - file [E]xplorer' })
 vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[S]earch - file explorer [C]urrent location' })
--- nvim-tree
--- vim.keymap.set('n', '<leader>te', ':NvimTreeToggle<CR>', { noremap = true, silent = true, desc = '[T]oggle file [E]xplorer' })
--- vim.keymap.set('n', '<leader>tc', ':NvimTreeFindFileToggle<CR>', { noremap = true, silent = true, desc = '[T]oggle [Current] file explorer' })
--- vim.keymap.set('n', '<leader>tt', ':NvimTreeFocus<CR>', { noremap = true, silent = true, desc = '[T]ree focus' })
 -- CmdS save
 vim.keymap.set('n', '<D-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save' })
 vim.keymap.set('i', '<D-s>', '<Esc>:w<CR>', { noremap = true, silent = true, desc = 'Save' })
@@ -194,6 +202,8 @@ vim.keymap.set({ 'n', 't' }, '<leader>tt', ':Lspsaga term_toggle<CR>', { noremap
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [C]lose all' })
+-- Zen mode
+vim.keymap.set('n', '<leader>tz', ':ZenMode<CR>', { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
 
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -221,11 +231,11 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
+--
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -264,7 +274,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- JB additions
+  -- JB plugins
   { 'onsails/lspkind.nvim' },
   { 'github/copilot.vim', event = 'VeryLazy' },
   {
@@ -338,6 +348,9 @@ require('lazy').setup({
           sign = false,
           enable = false,
         },
+        symbol_in_winbar = {
+          enable = false,
+        },
       }
     end,
   },
@@ -348,7 +361,6 @@ require('lazy').setup({
       'cp navigate_kitty.py ~/.config/kitty',
       'cp pass_keys.py ~/.config/kitty',
     },
-    opts = { keybindings = {} },
     keys = {
       {
         '<C-h>',
@@ -384,16 +396,6 @@ require('lazy').setup({
       },
     },
   },
-  -- {
-  --   'stevearc/oil.nvim',
-  --   ---@module 'oil'
-  --   ---@type oil.SetupOpts
-  --   opts = {},
-  --   -- Optional dependencies
-  --   dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-  --   -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-  -- },
-  { 'rmehri01/onenord.nvim' },
   {
     'NeogitOrg/neogit',
     dependencies = {
@@ -423,6 +425,19 @@ require('lazy').setup({
         },
       }
     end,
+  },
+  {
+    'folke/zen-mode.nvim',
+    opts = {
+      on_open = function(_)
+        vim.o.cmdheight = 1
+        vim.o.laststatus = 2
+      end,
+      on_close = function()
+        vim.o.cmdheight = 0
+        vim.o.laststatus = 3
+      end,
+    },
   },
 
   -- Original
@@ -544,8 +559,14 @@ require('lazy').setup({
 
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
-    event = 'VimEnter',
+    -- event = 'VimEnter',
     branch = '0.1.x',
+    keys = {
+      { 'C-L', false },
+      { 'C-H', false },
+      { 'C-J', false },
+      { 'C-K', false },
+    },
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -1090,16 +1111,16 @@ require('lazy').setup({
           --
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
-            end
-          end, { 'i', 's' }),
+          -- ['<C-l>'] = cmp.mapping(function()
+          --   if luasnip.expand_or_locally_jumpable() then
+          --     luasnip.expand_or_jump()
+          --   end
+          -- end, { 'i', 's' }),
+          -- ['<C-h>'] = cmp.mapping(function()
+          --   if luasnip.locally_jumpable(-1) then
+          --     luasnip.jump(-1)
+          --   end
+          -- end, { 'i', 's' }),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1136,6 +1157,12 @@ require('lazy').setup({
       -- vim.cmd.hi 'Comment gui=none'
     end,
   },
+  -- JB themes
+  {
+    'dgox16/oldworld.nvim',
+    lazy = true,
+  },
+  { 'rmehri01/onenord.nvim', lazy = true },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1300,16 +1327,6 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     -- vim.cmd '!eslint --fix %'
   end,
 })
-
--- nvim-tree
--- local nvim_tree = require 'nvim-tree'
--- nvim_tree.setup {
---   git = {
---     ignore = false,
---     enable = true,
---   },
---   -- ignore = { '.git', 'node_modules', '.cache' },
--- }
 
 local lspconfig = require 'lspconfig'
 local configs = require 'lspconfig.configs'
