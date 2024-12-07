@@ -1,91 +1,6 @@
 --[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
+-- Adapted from TJ DeVries' kickstart.nvim
 --]]
--- Needed for nvim-tree
--- vim.g.loaded_netrw = 1
--- vim.g.loaded_netrwPlugin = 1
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -98,7 +13,6 @@ vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
 -- JB options
@@ -112,11 +26,20 @@ vim.cmd [[autocmd VimEnter * Telescope oldfiles]]
 vim.opt.foldlevel = 99 -- Start with all folds open
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.api.nvim_create_augroup('fmt', {})
+-- vim.api.nvim_create_autocmd('BufWritePre', {
+--   buffer = 0,
+--   callback = function()
+--     vim.cmd 'Neoformat'
+--   end,
+-- })
+vim.api.nvim_create_augroup('END', {})
+
+vim.g.neoformat_only_msg_on_error = 0
+vim.g.neoformat_try_node_exe = 1
 
 -- Make line numbers default
 vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 -- vim.cmd 'autocmd FileType * set number'
 
@@ -178,7 +101,7 @@ vim.opt.scrolloff = 10
 
 -- JB keymaps
 -- Remap Ctrl-i to move up by half a page
-vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', { noremap = true, silent = true })
 -- Map 'jj' to exit insert mode
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true })
 -- Map Command-i to run :CopilotChat
@@ -201,9 +124,17 @@ vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silen
 vim.keymap.set({ 'n', 't' }, '<leader>tt', ':Lspsaga term_toggle<CR>', { noremap = true, silent = true, desc = '[T]oggle floating [T]erminal' })
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
-vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [C]lose all' })
+vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
+vim.keymap.set('n', '<leader>bc', ':Bclose<CR>', { noremap = true, silent = true, desc = '[B]uffer [C]lose' })
 -- Zen mode
 vim.keymap.set('n', '<leader>tz', ':ZenMode<CR>', { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
+-- Git
+vim.keymap.set('n', '<leader>gd', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [D]ashboard' })
+-- Tabs
+vim.keymap.set('n', '<leader>an', ':tabnew<CR>', { noremap = true, silent = true, desc = 'T[A]b [N]ew' })
+vim.keymap.set('n', '<leader>ac', ':tabclose<CR>', { noremap = true, silent = true, desc = 'T[A]b [C]lose' })
+vim.keymap.set('n', '<leader>ao', ':tabnext<CR>', { noremap = true, silent = true, desc = 'T[A]b Next [O]' })
+vim.keymap.set('n', '<leader>ai', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'T[A]b Previous [I]' })
 
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -439,19 +370,50 @@ require('lazy').setup({
       end,
     },
   },
+  -- Symbols outline
+  {
+    'hedyhli/outline.nvim',
+    lazy = true,
+    cmd = { 'Outline', 'OutlineOpen' },
+    keys = { -- Example mapping to toggle outline
+      { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle outline' },
+    },
+    opts = {
+      outline_window = {
+        wrap = true,
+      },
+      -- Your setup opts here
+    },
+  },
+  -- BClose - keep window layout on :bd
+  { 'chrismccord/bclose.vim', event = 'VeryLazy' },
+  -- Neoformat for Prettier (from Phil)
+  {
+    'sbdchd/neoformat',
+    keys = {
+      {
+        '<leader>nf',
+        function()
+          vim.cmd 'Neoformat'
+          vim.cmd 'Format' -- runs vim.lsp.buf.format()
+        end,
+      },
+    },
+    event = 'VimEnter',
+  },
 
   -- Original
-  {
-    'prettier/vim-prettier',
-    build = 'npm install --frozen-lockfile --production',
-    cmd = { 'Prettier', 'PrettierAsync' }, -- Lazy-load on specific commands
-    ft = { 'javascript', 'typescript', 'css', 'html', 'json' }, -- Lazy-load on specific filetypes
-    config = function()
-      -- Optional: configure vim-prettier settings
-      -- vim.g["prettier#config#single_quote"] = 1
-      -- vim.g["prettier#config#bracket_spacing"] = 0
-    end,
-  },
+  -- {
+  --   'prettier/vim-prettier',
+  --   build = 'npm install --frozen-lockfile --production',
+  --   cmd = { 'Prettier', 'PrettierAsync' }, -- Lazy-load on specific commands
+  --   ft = { 'javascript', 'typescript', 'css', 'html', 'json' }, -- Lazy-load on specific filetypes
+  --   config = function()
+  --     -- Optional: configure vim-prettier settings
+  --     -- vim.g["prettier#config#single_quote"] = 1
+  --     -- vim.g["prettier#config#bracket_spacing"] = 0
+  --   end,
+  -- },
   -- 'lspkind',
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
@@ -539,13 +501,14 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>b', group = '[B]uffer' },
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it' },
       },
     },
   },
@@ -631,6 +594,7 @@ require('lazy').setup({
               'rg',
               '--files',
               '--hidden',
+              '--no-require-git',
             },
           },
         },
@@ -666,6 +630,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch by git [B]ranch' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -993,22 +958,26 @@ require('lazy').setup({
         desc = '[F]ormat buffer',
       },
     },
+    -- This will provide type hinting with LuaLS
+    ---@module "conform"
+    ---@type conform.setupOpts
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        local lsp_format_opt
-        if disable_filetypes[vim.bo[bufnr].filetype] then
-          lsp_format_opt = 'never'
-        else
-          lsp_format_opt = 'fallback'
-        end
+        -- local disable_filetypes = { c = true, cpp = true }
+        -- local lsp_format_opt
+        -- if disable_filetypes[vim.bo[bufnr].filetype] then
+        --   lsp_format_opt = 'never'
+        -- else
+        --   lsp_format_opt = 'fallback'
+        -- end
         return {
-          timeout_ms = 500,
-          lsp_format = lsp_format_opt,
+          timeout_ms = 2500,
+          -- lsp_format = lsp_format_opt,
+          lsp_fallback = true,
         }
       end,
       formatters_by_ft = {
@@ -1322,8 +1291,9 @@ vim.cmd [[
 -- Automatically run :Prettier on file save for supported filetypes
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = { '*.tsx', '*.ts', '*.json' }, -- Add your desired file patterns
-  callback = function()
+  callback = function(args)
     vim.cmd 'EslintFixAll'
+    require('conform').format { bufnr = args.buf }
     -- vim.cmd '!eslint --fix %'
   end,
 })

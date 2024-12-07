@@ -43,6 +43,7 @@ local function config_lualine(colors)
 
   local filename = {
     'filename',
+    path = 4,
     color = { bg = colors.green, fg = colors.bg, gui = 'bold' },
     separator = { left = '', right = '' },
   }
@@ -206,6 +207,7 @@ local function config_lualine(colors)
         space,
       },
       lualine_c = {
+        -- { 'filename', path = 1 },
         filename,
         -- filetype,
         space,
