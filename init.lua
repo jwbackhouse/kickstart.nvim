@@ -35,8 +35,8 @@ vim.api.nvim_create_augroup('fmt', {})
 -- })
 vim.api.nvim_create_augroup('END', {})
 
-vim.g.neoformat_only_msg_on_error = 0
-vim.g.neoformat_try_node_exe = 1
+-- vim.g.neoformat_only_msg_on_error = 0
+-- vim.g.neoformat_try_node_exe = 1
 
 -- Make line numbers default
 vim.opt.number = true
@@ -129,12 +129,13 @@ vim.keymap.set('n', '<leader>bc', ':Bclose<CR>', { noremap = true, silent = true
 -- Zen mode
 vim.keymap.set('n', '<leader>tz', ':ZenMode<CR>', { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
 -- Git
-vim.keymap.set('n', '<leader>gd', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [D]ashboard' })
+vim.keymap.set('n', '<leader>gs', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [S]tatus' })
 -- Tabs
 vim.keymap.set('n', '<leader>an', ':tabnew<CR>', { noremap = true, silent = true, desc = 'T[A]b [N]ew' })
 vim.keymap.set('n', '<leader>ac', ':tabclose<CR>', { noremap = true, silent = true, desc = 'T[A]b [C]lose' })
 vim.keymap.set('n', '<leader>ao', ':tabnext<CR>', { noremap = true, silent = true, desc = 'T[A]b Next [O]' })
 vim.keymap.set('n', '<leader>ai', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'T[A]b Previous [I]' })
+vim.keymap.del('n', '<C-l>')
 
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -286,47 +287,51 @@ require('lazy').setup({
     end,
   },
   -- Kitty terminal navigation
-  {
-    'MunsMan/kitty-navigator.nvim',
-    build = {
-      'cp navigate_kitty.py ~/.config/kitty',
-      'cp pass_keys.py ~/.config/kitty',
-    },
-    keys = {
-      {
-        '<C-h>',
-        function()
-          require('kitty-navigator').navigateLeft()
-        end,
-        desc = 'Move left a Split',
-        mode = { 'n' },
-      },
-      {
-        '<C-j>',
-        function()
-          require('kitty-navigator').navigateDown()
-        end,
-        desc = 'Move down a Split',
-        mode = { 'n' },
-      },
-      {
-        '<C-k>',
-        function()
-          require('kitty-navigator').navigateUp()
-        end,
-        desc = 'Move up a Split',
-        mode = { 'n' },
-      },
-      {
-        '<C-l>',
-        function()
-          require('kitty-navigator').navigateRight()
-        end,
-        desc = 'Move right a Split',
-        mode = { 'n' },
-      },
-    },
-  },
+  -- {
+  --   'knubie/vim-kitty-navigator',
+  --   build = 'cp ./*.py ~/.config/kitty/',
+  -- },
+  -- {
+  --   'MunsMan/kitty-navigator.nvim',
+  --   build = {
+  --     'cp navigate_kitty.py ~/.config/kitty',
+  --     'cp pass_keys.py ~/.config/kitty',
+  --   },
+  --   keys = {
+  --     {
+  --       '<C-h>',
+  --       function()
+  --         require('kitty-navigator').navigateLeft()
+  --       end,
+  --       desc = 'Move left a Split',
+  --       mode = { 'n' },
+  --     },
+  --     {
+  --       '<C-j>',
+  --       function()
+  --         require('kitty-navigator').navigateDown()
+  --       end,
+  --       desc = 'Move down a Split',
+  --       mode = { 'n' },
+  --     },
+  --     {
+  --       '<C-k>',
+  --       function()
+  --         require('kitty-navigator').navigateUp()
+  --       end,
+  --       desc = 'Move up a Split',
+  --       mode = { 'n' },
+  --     },
+  --     {
+  --       '<C-l>',
+  --       function()
+  --         require('kitty-navigator').navigateRight()
+  --       end,
+  --       desc = 'Move right a Split',
+  --       mode = { 'n' },
+  --     },
+  --   },
+  -- },
   {
     'NeogitOrg/neogit',
     dependencies = {
@@ -388,19 +393,36 @@ require('lazy').setup({
   -- BClose - keep window layout on :bd
   { 'chrismccord/bclose.vim', event = 'VeryLazy' },
   -- Neoformat for Prettier (from Phil)
+  -- {
+  --   'sbdchd/neoformat',
+  --   keys = {
+  --     {
+  --       '<leader>nf',
+  --       function()
+  --         vim.cmd 'Neoformat'
+  --         vim.cmd 'Format' -- runs vim.lsp.buf.format()
+  --       end,
+  --     },
+  --   },
+  --   event = 'VimEnter',
+  -- },
+  -- Github for PR reviews
   {
-    'sbdchd/neoformat',
-    keys = {
+    'ldelossa/gh.nvim',
+    event = 'VeryLazy',
+    dependencies = {
       {
-        '<leader>nf',
-        function()
-          vim.cmd 'Neoformat'
-          vim.cmd 'Format' -- runs vim.lsp.buf.format()
+        'ldelossa/litee.nvim',
+        config = function()
+          require('litee.lib').setup()
         end,
       },
     },
-    event = 'VimEnter',
+    config = function()
+      require('litee.gh').setup()
+    end,
   },
+  { 'ldelossa/litee.nvim', event = 'VeryLazy' },
 
   -- Original
   -- {
@@ -522,13 +544,13 @@ require('lazy').setup({
 
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
-    -- event = 'VimEnter',
+    event = 'VimEnter',
     branch = '0.1.x',
     keys = {
-      { 'C-L', false },
-      { 'C-H', false },
-      { 'C-J', false },
-      { 'C-K', false },
+      -- { 'C-L', false },
+      -- { 'C-H', false },
+      -- { 'C-J', false },
+      -- { 'C-K', false },
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -776,34 +798,6 @@ require('lazy').setup({
           --  Most Language Servers support renaming across files, etc.
           -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
-          -- JB custom
-          -- See keymap above for Lspsaga
-          -- Custom fn that allows you to edit within a terminal prompt using n/i mode
-          -- vim.keymap.set('n', '<leader>r', function()
-          --   -- when rename opens the prompt, this autocommand will trigger
-          --   -- it will "press" CTRL-F to enter the command-line window `:h cmdwin`
-          --   -- in this window I can use normal mode keybindings
-          --   local cmdId
-          --   cmdId = vim.api.nvim_create_autocmd({ 'CmdlineEnter' }, {
-          --     callback = function()
-          --       local key = vim.api.nvim_replace_termcodes('<C-f>', true, false, true)
-          --       vim.api.nvim_feedkeys(key, 'c', false)
-          --       vim.api.nvim_feedkeys('0', 'n', false)
-          --       -- autocmd was triggered and so we can remove the ID and return true to delete the autocmd
-          --       cmdId = nil
-          --       return true
-          --     end,
-          --   })
-          --   vim.lsp.buf.rename()
-          --   -- if LPS couldn't trigger rename on the symbol, clear the autocmd
-          --   vim.defer_fn(function()
-          --     -- the cmdId is not nil only if the LSP failed to rename
-          --     if cmdId then
-          --       vim.api.nvim_del_autocmd(cmdId)
-          --     end
-          --   end, 500)
-          -- end)
-
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
@@ -942,6 +936,7 @@ require('lazy').setup({
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
+    event = 'VimEnter',
   },
 
   { -- Autoformat
@@ -977,7 +972,7 @@ require('lazy').setup({
         return {
           timeout_ms = 2500,
           -- lsp_format = lsp_format_opt,
-          lsp_fallback = true,
+          lsp_fallback = false,
         }
       end,
       formatters_by_ft = {
@@ -987,7 +982,7 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettier', 'prettierd', stop_after_first = false },
       },
     },
   },
@@ -1015,7 +1010,7 @@ require('lazy').setup({
           -- {
           --   'rafamadriz/friendly-snippets',
           --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
+          --     require('luasnip.loaders.from_vscode').lazy_load {}
           --   end,
           -- },
         },
@@ -1156,18 +1151,18 @@ require('lazy').setup({
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
+      -- --  and try some other statusline plugin
+      -- local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -1179,6 +1174,15 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = 'gnn',
+          node_incremental = 'grn',
+          scope_incremental = 'grc',
+          node_decremental = 'grm',
+        },
+      },
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1187,7 +1191,7 @@ require('lazy').setup({
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+        -- additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
