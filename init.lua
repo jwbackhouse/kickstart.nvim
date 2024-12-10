@@ -100,12 +100,13 @@ vim.opt.scrolloff = 10
 --  See `:help vim.keymap.set()`
 
 -- JB keymaps
+local default_options = { noremap = true, silent = true }
 -- Remap Ctrl-i to move up by half a page
--- vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', default_options)
 -- Map 'jj' to exit insert mode
-vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true })
+vim.keymap.set('i', 'jj', '<Esc>', default_options)
 -- Map Command-i to run :CopilotChat
-vim.keymap.set('n', '<D-i>', ':CopilotChat<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<D-i>', ':CopilotChat<CR>', default_options)
 -- Telescope file explorer
 vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch - file [E]xplorer' })
 vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[S]earch - file explorer [C]urrent location' })
@@ -113,7 +114,7 @@ vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buf
 vim.keymap.set('n', '<D-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save' })
 vim.keymap.set('i', '<D-s>', '<Esc>:w<CR>', { noremap = true, silent = true, desc = 'Save' })
 -- Diagnostics
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, default_options)
 -- Remove unused imports
 vim.keymap.set('n', "<D-S-'>", ':TSToolsRemoveUnusedImports<CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
 -- Cycle through buffers
@@ -135,8 +136,11 @@ vim.keymap.set('n', '<leader>an', ':tabnew<CR>', { noremap = true, silent = true
 vim.keymap.set('n', '<leader>ac', ':tabclose<CR>', { noremap = true, silent = true, desc = 'T[A]b [C]lose' })
 vim.keymap.set('n', '<leader>ao', ':tabnext<CR>', { noremap = true, silent = true, desc = 'T[A]b Next [O]' })
 vim.keymap.set('n', '<leader>ai', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'T[A]b Previous [I]' })
-vim.keymap.del('n', '<C-l>')
-
+-- Kitty Navigate Splits
+vim.keymap.set('n', '<C-J>', ':KittyNavigateDown <CR>', default_options)
+vim.keymap.set('n', '<C-K>', ':KittyNavigateUp <CR>', default_options)
+vim.keymap.set('n', '<C-L>', ':KittyNavigateRight <CR>', default_options)
+vim.keymap.set('n', '<C-H>', ':KittyNavigateLeft <CR>', default_options)
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -286,52 +290,6 @@ require('lazy').setup({
       }
     end,
   },
-  -- Kitty terminal navigation
-  -- {
-  --   'knubie/vim-kitty-navigator',
-  --   build = 'cp ./*.py ~/.config/kitty/',
-  -- },
-  -- {
-  --   'MunsMan/kitty-navigator.nvim',
-  --   build = {
-  --     'cp navigate_kitty.py ~/.config/kitty',
-  --     'cp pass_keys.py ~/.config/kitty',
-  --   },
-  --   keys = {
-  --     {
-  --       '<C-h>',
-  --       function()
-  --         require('kitty-navigator').navigateLeft()
-  --       end,
-  --       desc = 'Move left a Split',
-  --       mode = { 'n' },
-  --     },
-  --     {
-  --       '<C-j>',
-  --       function()
-  --         require('kitty-navigator').navigateDown()
-  --       end,
-  --       desc = 'Move down a Split',
-  --       mode = { 'n' },
-  --     },
-  --     {
-  --       '<C-k>',
-  --       function()
-  --         require('kitty-navigator').navigateUp()
-  --       end,
-  --       desc = 'Move up a Split',
-  --       mode = { 'n' },
-  --     },
-  --     {
-  --       '<C-l>',
-  --       function()
-  --         require('kitty-navigator').navigateRight()
-  --       end,
-  --       desc = 'Move right a Split',
-  --       mode = { 'n' },
-  --     },
-  --   },
-  -- },
   {
     'NeogitOrg/neogit',
     dependencies = {
