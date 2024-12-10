@@ -244,13 +244,6 @@ require('lazy').setup({
         '<cmd>Yazi cwd<cr>',
         desc = '[F]ile manager in [C]urrent working directory',
       },
-      {
-        -- NOTE: this requires a version of yazi that includes
-        -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
-        '<c-up>',
-        '<cmd>Yazi toggle<cr>',
-        desc = 'Resume the last yazi session',
-      },
     },
     ---@type YaziConfig
     opts = {
@@ -261,9 +254,6 @@ require('lazy').setup({
       },
     },
   },
-  { 'f-person/git-blame.nvim', event = 'VeryLazy', opts = {
-    date_format = '%m-%d-%Y',
-  } },
   -- Context aka sticky highlight
   {
     'nvim-treesitter/nvim-treesitter-context',
@@ -289,15 +279,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-  {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-      'nvim-telescope/telescope.nvim', -- optional
-    },
-    config = true,
   },
   -- Scrollbar
   {
@@ -364,23 +345,6 @@ require('lazy').setup({
   --   },
   --   event = 'VimEnter',
   -- },
-  -- Github for PR reviews
-  {
-    'ldelossa/gh.nvim',
-    event = 'VeryLazy',
-    dependencies = {
-      {
-        'ldelossa/litee.nvim',
-        config = function()
-          require('litee.lib').setup()
-        end,
-      },
-    },
-    config = function()
-      require('litee.gh').setup()
-    end,
-  },
-  { 'ldelossa/litee.nvim', event = 'VeryLazy' },
 
   -- Original
   -- {
@@ -404,24 +368,6 @@ require('lazy').setup({
   --
   -- Use `opts = {}` to force a plugin to be loaded.
   --
-
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
