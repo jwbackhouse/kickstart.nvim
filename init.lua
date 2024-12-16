@@ -22,6 +22,17 @@ vim.opt.laststatus = 3
 vim.cmd [[autocmd FileType * set formatoptions-=ro]]
 -- Launch Telescope oldfiles on startup
 vim.cmd [[autocmd VimEnter * Telescope oldfiles]]
+-- Prevent Telescope opening on launch
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--   pattern = '*',
+--   callback = function()
+--     if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) then
+--       vim.cmd 'enew'
+--       -- vim.cmd('lcd ' .. vim.fn.argv(0))
+--     end
+--   end,
+-- })
+
 -- Folding
 vim.opt.foldlevel = 99 -- Start with all folds open
 vim.opt.foldmethod = 'expr'
@@ -106,7 +117,13 @@ local default_options = { noremap = true, silent = true }
 -- Map 'jj' to exit insert mode
 vim.keymap.set('i', 'jj', '<Esc>', default_options)
 -- Map Command-i to run :CopilotChat
-vim.keymap.set('n', '<D-i>', ':CopilotChat<CR>', default_options)
+vim.keymap.set({ 'v', 'n' }, '<D-i>', ':CopilotChat<cr>', default_options)
+-- copilot - replace tab for accepting suggestions
+-- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+--   expr = true,
+--   replace_keycodes = false,
+-- })
+-- vim.g.copilot_no_tab_map = true
 -- Telescope file explorer
 vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch - file [E]xplorer' })
 vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[S]earch - file explorer [C]urrent location' })
@@ -141,6 +158,20 @@ vim.keymap.set('n', '<C-J>', ':KittyNavigateDown <CR>', default_options)
 vim.keymap.set('n', '<C-K>', ':KittyNavigateUp <CR>', default_options)
 vim.keymap.set('n', '<C-L>', ':KittyNavigateRight <CR>', default_options)
 vim.keymap.set('n', '<C-H>', ':KittyNavigateLeft <CR>', default_options)
+-- window splits
+vim.keymap.set('n', '<leader>wv', ':vs<CR>', { noremap = true, silent = true, desc = '[w]indow [v]ertical split' })
+vim.keymap.set('n', '<leader>wh', ':split<CR>', { noremap = true, silent = true, desc = '[w]indow [h]orizontal split' })
+-- custom
+vim.keymap.set('n', '<leader>cl', function()
+  require('custom.utils').quicklog()
+end, { noremap = true, silent = true, desc = '[C]ode [L]og' })
+-- Lua
+vim.keymap.set('n', '<leader>ls', '<cmd>source %<CR>', { noremap = true, silent = true, desc = '[L]ua [S]ource file' })
+vim.keymap.set('n', '<leader>lr', ':.lua<CR>', { noremap = true, silent = true, desc = '[L]ua [R]un' })
+vim.keymap.set('v', '<leader>lr', ':lua<CR>', { noremap = true, silent = true, desc = '[L]ua [R]un' })
+vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>', { noremap = true, silent = false, desc = 'Quickfix next' })
+vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { noremap = true, silent = false, desc = 'Quickfix previous' })
+
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -222,7 +253,7 @@ require('lazy').setup({
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-      -- See Configuration section for options
+      model = 'claude-3.5-sonnet',
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
@@ -332,19 +363,73 @@ require('lazy').setup({
   -- BClose - keep window layout on :bd
   { 'chrismccord/bclose.vim', event = 'VeryLazy' },
   -- Neoformat for Prettier (from Phil)
-  -- {
-  --   'sbdchd/neoformat',
-  --   keys = {
-  --     {
-  --       '<leader>nf',
-  --       function()
-  --         vim.cmd 'Neoformat'
-  --         vim.cmd 'Format' -- runs vim.lsp.buf.format()
-  --       end,
-  --     },
-  --   },
-  --   event = 'VimEnter',
-  -- },
+  {
+    'sbdchd/neoformat',
+    keys = {
+      -- {
+      --   '<leader>nf',
+      --   function()
+      --     vim.cmd 'Neoformat'
+      --     -- vim.cmd 'Format' -- runs vim.lsp.buf.format()
+      --   end,
+      -- },
+    },
+    event = 'VimEnter',
+  },
+  {
+    'kevinhwang91/nvim-bqf',
+    ft = 'qf',
+    keys = {
+      -- Toggle quickfix window
+      {
+        '<leader>=',
+        function()
+          for _, win in pairs(vim.fn.getwininfo()) do
+            if win.quickfix == 1 then
+              vim.cmd 'cclose'
+              return
+            end
+          end
+          vim.cmd 'copen'
+        end,
+      },
+      -- {
+      --   '<M-k>',
+      --   '<cmd>cprev<CR>',
+      -- },
+      -- {
+      --   '<M-j>',
+      --   '<cmd>cnext<CR>',
+      -- },
+    },
+  },
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {
+      default_file_explorer = false,
+      delete_to_trash = true,
+      view_options = {
+        show_hidden = true,
+        case_insensitive = true,
+      },
+      git = {
+        mv = function()
+          return true
+        end,
+        add = function()
+          return true
+        end,
+        rm = function()
+          return true
+        end,
+      },
+    },
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+  },
 
   -- Original
   -- {
@@ -435,6 +520,7 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>g', group = '[G]it' },
+        { '<leader>l', group = '[L]ua' },
       },
     },
   },
@@ -507,15 +593,21 @@ require('lazy').setup({
         --
         defaults = {
           file_ignore_patterns = { 'node_modules' },
-          --   mappings = {
-          --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-          --   },
-          theme = 'center',
+          mappings = {
+            i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          },
           find_command = { 'fd', '--type', 'f', '--hidden', '--no-ignore' },
         },
 
         pickers = {
+          oldfiles = {
+            theme = 'ivy',
+          },
+          git_branches = {
+            theme = 'ivy',
+          },
           find_files = {
+            theme = 'ivy',
             find_command = {
               'rg',
               '--files',
@@ -528,6 +620,7 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          fzf = {},
           file_browser = {
             hijack_netrw = true,
             respect_gitignore = false,
@@ -552,7 +645,10 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        local opts = require('telescope.themes').get_ivy() -- duplicates default, but shows how to change
+        builtin.find_files(opts)
+      end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -574,7 +670,9 @@ require('lazy').setup({
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
       vim.keymap.set('n', '<leader>s/', function()
+        local ivy = require('telescope.themes').get_ivy()
         builtin.live_grep {
+          theme = ivy,
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
@@ -597,6 +695,8 @@ require('lazy').setup({
           -- }
         end
       end, { noremap = true, silent = true, desc = '[S]earch [D]irectory' })
+
+      require('config.telescope.multigrep').setup()
     end,
   },
 
@@ -1202,6 +1302,7 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   callback = function(args)
     vim.cmd 'EslintFixAll'
     require('conform').format { bufnr = args.buf }
+    vim.cmd 'Neoformat'
     -- vim.cmd '!eslint --fix %'
   end,
 })

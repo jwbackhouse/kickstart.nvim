@@ -21,7 +21,7 @@ return {
     },
   },
   { 'f-person/git-blame.nvim', event = 'VeryLazy', opts = {
-    date_format = '%m-%d-%Y',
+    date_format = '%d-%m-%Y',
   } },
   {
     'NeogitOrg/neogit',
@@ -66,4 +66,12 @@ return {
       },
     },
   },
+
+  -- Keybindings
+  vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>', { noremap = true, silent = true, desc = '[G]it [D]iffview' }),
+  -- PRs
+  vim.keymap.set('n', '<leader>gpo', '<cmd>GHOpenPR<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [O]pen' }),
+  vim.keymap.set('n', '<leader>gpr', '<cmd>GHStartReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [R]eview start' }),
+  vim.keymap.set('n', '<leader>gpf', '<cmd>GHSubmitReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),
+  vim.keymap.set('n', '<leader>gpc', '<cmd>GHCreateThread<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [C]omment' }),
 }
