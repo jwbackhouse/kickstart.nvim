@@ -26,8 +26,8 @@ local function config_lualine(colors)
     normal = {
       a = { fg = colors.bg_dark, bg = colors.blue },
       b = { fg = colors.blue, bg = colors.white },
-      c = { fg = colors.white, bg = colors.bg_dark },
-      z = { fg = colors.white, bg = colors.bg_dark },
+      c = { fg = colors.white, bg = colors.bg },
+      z = { fg = colors.white, bg = colors.bg },
     },
     insert = { a = { fg = colors.bg_dark, bg = colors.orange } },
     visual = { a = { fg = colors.bg_dark, bg = colors.green } },
@@ -38,7 +38,7 @@ local function config_lualine(colors)
     function()
       return ' '
     end,
-    color = { bg = colors.bg_dark, fg = colors.blue },
+    color = { bg = colors.bg, fg = colors.blue },
   }
 
   local filename = {
@@ -259,7 +259,13 @@ return {
   'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons', 'folke/tokyonight.nvim' },
   config = function()
+    local bgColor = vim.opt.background:get()
+    -- local style = bgColor == 'light' and 'day' or 'night'
+    -- local colors = require('tokyonight.colors').setup { style = 'day' }
+
     local colors = require 'tokyonight.colors.storm'
+    -- local colors = require('catppuccin.palettes').get_palette 'latte'
+    -- local colors = bgColor == 'dark' and require 'tokyonight.colors.storm' or require 'tokoynight.colors.day'
     config_lualine(colors)
   end,
 }

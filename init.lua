@@ -1,7 +1,6 @@
 --[[
 -- Adapted from TJ DeVries' kickstart.nvim
 --]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -139,7 +138,20 @@ vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true, desc
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'Previous buffer' })
 -- Lspsaga
 vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silent = true, desc = '[R]e[n]ame' })
-vim.keymap.set({ 'n', 't' }, '<leader>tt', ':Lspsaga term_toggle<CR>', { noremap = true, silent = true, desc = '[T]oggle floating [T]erminal' })
+-- Builtin terminal
+vim.api.nvim_create_autocmd('TermOpen', {
+  group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
+  callback = function()
+    vim.opt.number = false
+    vim.opt.relativenumber = false
+  end,
+})
+vim.keymap.set({ 'n', 't' }, '<leader>tt', function()
+  vim.cmd.vnew()
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 5)
+end, { noremap = true, silent = true, desc = '[T]oggle [T]erminal' })
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
@@ -151,8 +163,8 @@ vim.keymap.set('n', '<leader>gs', ':Neogit<CR>', { noremap = true, silent = true
 -- Tabs
 vim.keymap.set('n', '<leader>an', ':tabnew<CR>', { noremap = true, silent = true, desc = 'T[A]b [N]ew' })
 vim.keymap.set('n', '<leader>ac', ':tabclose<CR>', { noremap = true, silent = true, desc = 'T[A]b [C]lose' })
-vim.keymap.set('n', '<leader>ao', ':tabnext<CR>', { noremap = true, silent = true, desc = 'T[A]b Next [O]' })
 vim.keymap.set('n', '<leader>ai', ':tabprevious<CR>', { noremap = true, silent = true, desc = 'T[A]b Previous [I]' })
+vim.keymap.set('n', '<leader>ao', ':tabnext<CR>', { noremap = true, silent = true, desc = 'T[A]b Next [O]' })
 -- Kitty Navigate Splits
 vim.keymap.set('n', '<C-J>', ':KittyNavigateDown <CR>', default_options)
 vim.keymap.set('n', '<C-K>', ':KittyNavigateUp <CR>', default_options)
@@ -268,12 +280,6 @@ require('lazy').setup({
         '<leader>-',
         '<cmd>Yazi<cr>',
         desc = 'Open yazi at the current file',
-      },
-      {
-        -- Open in the current working directory
-        '<leader>fc',
-        '<cmd>Yazi cwd<cr>',
-        desc = '[F]ile manager in [C]urrent working directory',
       },
     },
     ---@type YaziConfig
@@ -407,28 +413,84 @@ require('lazy').setup({
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
-    opts = {
-      default_file_explorer = false,
-      delete_to_trash = true,
-      view_options = {
-        show_hidden = true,
-        case_insensitive = true,
-      },
-      git = {
-        mv = function()
-          return true
-        end,
-        add = function()
-          return true
-        end,
-        rm = function()
-          return true
-        end,
-      },
-    },
     -- Optional dependencies
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+    config = function()
+      vim.keymap.set('n', '<leader>fe', '<cmd>Oil<CR>', { desc = '[F]ile [E]xplorer' })
+      local oil = require 'oil'
+      oil.setup {
+        default_file_explorer = false,
+        delete_to_trash = true,
+        view_options = {
+          show_hidden = true,
+          case_insensitive = true,
+        },
+        git = {
+          mv = function()
+            return true
+          end,
+          add = function()
+            return true
+          end,
+          rm = function()
+            return true
+          end,
+        },
+      }
+    end,
+  },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    config = function()
+      local harpoon = require 'harpoon'
+      ---@diagnostic disable-next-line: missing-parameter
+      harpoon:setup()
+      local function map(lhs, rhs, opts)
+        vim.keymap.set('n', lhs, rhs, opts or {})
+      end
+      map('<leader>ha', function()
+        harpoon:list():add()
+      end, { desc = '[H]arpoon [A]ppend' })
+      map('<leader>hh', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end, { desc = '[H]arpoon [H]arpoon' })
+      map('<leader>1', function()
+        harpoon:list():select(1)
+      end, { desc = '[H]arpoon [1]' })
+      map('<leader>2', function()
+        harpoon:list():select(2)
+      end, { desc = '[H]arpoon [2]' })
+      map('<leader>3', function()
+        harpoon:list():select(3)
+      end, { desc = '[H]arpoon [3]' })
+      map('<leader>4', function()
+        harpoon:list():select(4)
+      end, { desc = '[H]arpoon [4]' })
+      map('<leader>5', function()
+        harpoon:list():select(5)
+      end, { desc = '[H]arpoon [5]' })
+    end,
+  },
+  {
+    'f-person/auto-dark-mode.nvim',
+    lazy = false,
+    config = function()
+      require('auto-dark-mode').setup {
+        set_dark_mode = function()
+          vim.api.nvim_set_option_value('background', 'dark', {})
+          -- vim.cmd 'colorscheme tokyonight-storm'
+        end,
+        set_light_mode = function()
+          vim.api.nvim_set_option_value('background', 'light', {})
+          -- vim.cmd 'colorscheme tokyonight-day'
+        end,
+      }
+    end,
+  },
+  {
+    'tjdevries/colorbuddy.nvim',
   },
 
   -- Original
@@ -443,7 +505,6 @@ require('lazy').setup({
   --     -- vim.g["prettier#config#bracket_spacing"] = 0
   --   end,
   -- },
-  -- 'lspkind',
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -512,15 +573,16 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>a', group = 'T[A]b' },
         { '<leader>b', group = '[B]uffer' },
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
-        { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
         { '<leader>g', group = '[G]it' },
         { '<leader>l', group = '[L]ua' },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>t', group = '[T]oggle' },
+        { '<leader>w', group = '[W]orkspace' },
       },
     },
   },
@@ -696,7 +758,7 @@ require('lazy').setup({
         end
       end, { noremap = true, silent = true, desc = '[S]earch [D]irectory' })
 
-      require('config.telescope.multigrep').setup()
+      require('custom.plugins.multigrep').setup()
     end,
   },
 
@@ -947,16 +1009,16 @@ require('lazy').setup({
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
+    -- keys = {
+    --   {
+    --     '<leader>f',
+    --     function()
+    --       require('conform').format { async = true, lsp_format = 'fallback' }
+    --     end,
+    --     mode = '',
+    --     desc = '[F]ormat buffer',
+    --   },
+    -- },
     -- This will provide type hinting with LuaLS
     ---@module "conform"
     ---@type conform.setupOpts
@@ -1026,11 +1088,15 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lua',
+      'hrsh7th/cmp-cmdline',
+      'chrisgrieser/cmp_yanky',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
       luasnip.config.setup {}
 
       cmp.setup {
@@ -1099,11 +1165,59 @@ require('lazy').setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
+          { name = 'nvim_lua' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'cmdline' },
+          { name = 'cmp_yanky' },
+        },
+        formatting = {
+          format = lspkind.cmp_format {
+            with_text = true,
+            mode = 'symbol',
+            ellipsis_car = '…',
+            show_label_details = true,
+            menu = {
+              buffer = '[buf]',
+              nvim_lsp = '[LSP]',
+              nvim_lua = '[Lua]',
+              path = '[path]',
+              luasnip = '[snip]',
+            },
+            maxwidth = 50,
+          },
+          fields = { 'kind', 'abbr', 'menu' },
+          expandable_indicator = true,
         },
       }
+
+      cmp.setup.filetype({ 'sql' }, {
+        sources = {
+          { name = 'vim-dadbod-completion' },
+          { name = 'buffer' },
+        },
+      })
+
+      cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' },
+        },
+      })
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' },
+        }, {
+          {
+            name = 'cmdline',
+            option = {
+              ignore_cmds = { 'Man', '!' },
+            },
+          },
+        }),
+      })
     end,
   },
 
@@ -1128,9 +1242,11 @@ require('lazy').setup({
   -- JB themes
   {
     'dgox16/oldworld.nvim',
+    name = 'oldworld',
     lazy = true,
   },
-  { 'rmehri01/onenord.nvim', lazy = true },
+  { 'rmehri01/onenord.nvim', name = 'onenord', lazy = true },
+  { 'catppuccin/nvim', name = 'catppuccin', lazy = true },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1257,7 +1373,7 @@ require('lazy').setup({
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
--- Inspired by https://blog.inkdrop.app/my-neovim-setup-for-react-typescript-tailwind-css-etc-in-2022-a7405862c9a4
+-- -- Inspired by https://blog.inkdrop.app/my-neovim-setup-for-react-typescript-tailwind-css-etc-in-2022-a7405862c9a4
 local status, cmp = pcall(require, 'cmp')
 if not status then
   return
@@ -1282,7 +1398,7 @@ cmp.setup {
   },
   sources = cmp.config.sources {
     { name = 'nvim_lsp' },
-    { name = 'buffer' },
+    { name = 'buffer', keyword_length = 5 },
   },
   formatting = {
     format = lspkind.cmp_format { with_text = false, maxwidth = 50 },
