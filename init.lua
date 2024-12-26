@@ -270,7 +270,6 @@ require('lazy').setup({
     -- See Commands section for default commands if you want to lazy load on them
   },
   -- File explorer
-  -- { 'vim-tree/nvim-tree.lua', event = 'VeryLazy' },
   {
     'mikavilpas/yazi.nvim',
     event = 'VeryLazy',
@@ -489,8 +488,10 @@ require('lazy').setup({
       }
     end,
   },
+  -- Used by cmp_yanky
   {
-    'tjdevries/colorbuddy.nvim',
+    'gbprod/yanky.nvim',
+    opts = {},
   },
 
   -- Original
@@ -1055,7 +1056,7 @@ require('lazy').setup({
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
+    event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
@@ -1165,19 +1166,18 @@ require('lazy').setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
+          { name = 'vim-dadbod-completion' },
+          { name = 'cmp_yanky' },
           { name = 'nvim_lua' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'cmdline' },
-          { name = 'cmp_yanky' },
         },
         formatting = {
           format = lspkind.cmp_format {
             with_text = true,
             mode = 'symbol',
-            ellipsis_car = '…',
-            show_label_details = true,
             menu = {
               buffer = '[buf]',
               nvim_lsp = '[LSP]',
@@ -1185,7 +1185,7 @@ require('lazy').setup({
               path = '[path]',
               luasnip = '[snip]',
             },
-            maxwidth = 50,
+            maxwidth = 80,
           },
           fields = { 'kind', 'abbr', 'menu' },
           expandable_indicator = true,
@@ -1202,6 +1202,8 @@ require('lazy').setup({
       cmp.setup.cmdline('/', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
+          { name = 'cmdline' },
+          { name = 'path' },
           { name = 'buffer' },
         },
       })
@@ -1217,6 +1219,7 @@ require('lazy').setup({
             },
           },
         }),
+        matching = { disallow_symbol_nonprefix_matching = false },
       })
     end,
   },
@@ -1374,44 +1377,44 @@ require('lazy').setup({
 -- vim: ts=2 sts=2 sw=2 et
 
 -- -- Inspired by https://blog.inkdrop.app/my-neovim-setup-for-react-typescript-tailwind-css-etc-in-2022-a7405862c9a4
-local status, cmp = pcall(require, 'cmp')
-if not status then
-  return
-end
-local lspkind = require 'lspkind'
-
-cmp.setup {
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  mapping = cmp.mapping.preset.insert {
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
-  },
-  sources = cmp.config.sources {
-    { name = 'nvim_lsp' },
-    { name = 'buffer', keyword_length = 5 },
-  },
-  formatting = {
-    format = lspkind.cmp_format { with_text = false, maxwidth = 50 },
-    fields = { 'kind', 'abbr', 'menu' },
-    expandable_indicator = true,
-  },
-}
-
-vim.cmd [[
-  set completeopt=menuone,noinsert,noselect
-  highlight! default link CmpItemKind CmpItemMenuDefault
-]]
-
+-- local status, cmp = pcall(require, 'cmp')
+-- if not status then
+--   return
+-- end
+-- local lspkind = require 'lspkind'
+--
+-- cmp.setup {
+--   snippet = {
+--     expand = function(args)
+--       require('luasnip').lsp_expand(args.body)
+--     end,
+--   },
+--   mapping = cmp.mapping.preset.insert {
+--     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+--     ['<C-f>'] = cmp.mapping.scroll_docs(4),
+--     ['<C-Space>'] = cmp.mapping.complete(),
+--     ['<C-e>'] = cmp.mapping.close(),
+--     ['<CR>'] = cmp.mapping.confirm {
+--       behavior = cmp.ConfirmBehavior.Replace,
+--       select = true,
+--     },
+--   },
+--   sources = cmp.config.sources {
+--     { name = 'nvim_lsp' },
+--     { name = 'buffer', keyword_length = 5 },
+--   },
+--   formatting = {
+--     format = lspkind.cmp_format { with_text = false, maxwidth = 50 },
+--     fields = { 'kind', 'abbr', 'menu' },
+--     expandable_indicator = true,
+--   },
+-- }
+--
+-- vim.cmd [[
+--   set completeopt=menuone,noinsert,noselect
+--   highlight! default link CmpItemKind CmpItemMenuDefault
+-- ]]
+--
 -- Automatically run :Prettier on file save for supported filetypes
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = { '*.tsx', '*.ts', '*.json' }, -- Add your desired file patterns
