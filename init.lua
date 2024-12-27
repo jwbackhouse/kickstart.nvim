@@ -493,6 +493,15 @@ require('lazy').setup({
     'gbprod/yanky.nvim',
     opts = {},
   },
+  {
+    'jedrzejboczar/possession.nvim',
+    dependencies = {
+      { 'nvim-lua/plenary.nvim' },
+    },
+    config = function()
+      require('possession').setup {}
+    end,
+  },
 
   -- Original
   -- {
@@ -703,6 +712,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'file_browser')
+      pcall(require('telescope').load_extension, 'possession')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
