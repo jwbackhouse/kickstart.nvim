@@ -1,3 +1,8 @@
+require('lazy').setup {
+  'kevinhwang91/nvim-bqf',
+  ft = 'qf', -- Load only when quickfix window is opened
+}
+
 local fn = vim.fn
 
 function _G.qftf(info)
@@ -56,6 +61,7 @@ vim.o.qftf = '{info -> v:lua._G.qftf(info)}'
 require('bqf').setup {
   filter = {
     fzf = {
+      action_for = {},
       extra_opts = { '--bind', 'ctrl-o:toggle-all', '--delimiter', '│' },
     },
   },
