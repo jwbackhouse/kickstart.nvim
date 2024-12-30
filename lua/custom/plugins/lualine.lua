@@ -253,19 +253,23 @@ local function config_lualine(colors)
   }
 end
 
--- local colors = require 'tokyonight.colors.storm'
--- config_lualine(colors)
+local function update_mode_colors(is_dark_mode)
+  local colors = is_dark_mode and require 'tokyonight.colors.storm' or require('tokyonight.colors').setup { style = 'day' }
+
+  if not is_dark_mode then
+    colors.bg = colors.bg_dark1
+  end
+
+  config_lualine(colors)
+  vim.cmd 'redrawstatus' -- Force a redraw
+end
+
 return {
   'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons', 'folke/tokyonight.nvim' },
   config = function()
-    local bgColor = vim.opt.background:get()
-    -- local style = bgColor == 'light' and 'day' or 'night'
-    -- local colors = require('tokyonight.colors').setup { style = 'day' }
-
     local colors = require 'tokyonight.colors.storm'
-    -- local colors = require('catppuccin.palettes').get_palette 'latte'
-    -- local colors = bgColor == 'dark' and require 'tokyonight.colors.storm' or require 'tokoynight.colors.day'
     config_lualine(colors)
   end,
+  update_mode_colors = update_mode_colors,
 }
