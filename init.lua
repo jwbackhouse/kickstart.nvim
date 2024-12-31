@@ -377,33 +377,6 @@ require('lazy').setup({
     event = 'VimEnter',
   },
   {
-    'kevinhwang91/nvim-bqf',
-    ft = 'qf',
-    keys = {
-      -- Toggle quickfix window
-      {
-        '<leader>=',
-        function()
-          for _, win in pairs(vim.fn.getwininfo()) do
-            if win.quickfix == 1 then
-              vim.cmd 'cclose'
-              return
-            end
-          end
-          vim.cmd 'copen'
-        end,
-      },
-      -- {
-      --   '<M-k>',
-      --   '<cmd>cprev<CR>',
-      -- },
-      -- {
-      --   '<M-j>',
-      --   '<cmd>cnext<CR>',
-      -- },
-    },
-  },
-  {
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
