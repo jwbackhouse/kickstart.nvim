@@ -15,6 +15,7 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 -- JB options
+vim.api.nvim_set_hl(0, 'CursorLine', { underline = true })
 require 'custom.settings.appearance'
 -- Only show status bar on current window
 vim.opt.laststatus = 3
@@ -139,7 +140,6 @@ vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silen
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
 -- Superceded by Snacks in plugins.qol
--- vim.keymap.set('n', '<leader>bc', ':Bclose<CR>', { noremap = true, silent = true, desc = '[B]uffer [C]lose' })
 -- Zen mode
 vim.keymap.set('n', '<leader>tz', ':ZenMode<CR>', { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
 -- Git
@@ -172,6 +172,10 @@ vim.keymap.set('n', '<leader>of', function()
   local cwd = vim.fn.expand '%:p:h' -- Get the directory of the current file
   vim.fn.system { 'open -a Marta', cwd }
 end, { desc = '[O]pen in [F]inder' })
+-- Context
+vim.keymap.set('n', '[c', function()
+  require('treesitter-context').go_to_context(vim.v.count1)
+end, { noremap = true, silent = true, desc = 'Previous context' })
 
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -336,11 +340,11 @@ require('lazy').setup({
     enabled = true,
     opts = {
       on_open = function(_)
-        vim.o.cmdheight = 1
-        vim.o.laststatus = 2
+        vim.g.cmdheight = 0
+        vim.o.laststatus = 0
       end,
       on_close = function()
-        vim.o.cmdheight = 0
+        vim.g.cmdheight = 1
         vim.o.laststatus = 3
       end,
     },
@@ -360,8 +364,6 @@ require('lazy').setup({
       -- Your setup opts here
     },
   },
-  -- BClose - keep window layout on :bd
-  { 'chrismccord/bclose.vim', event = 'VeryLazy' },
   -- Neoformat for Prettier (from Phil)
   {
     'sbdchd/neoformat',
@@ -452,7 +454,11 @@ require('lazy').setup({
       { 'nvim-lua/plenary.nvim' },
     },
     config = function()
-      require('possession').setup {}
+      require('possession').setup {
+        plugins = {
+          delete_hidden_buffers = false,
+        },
+      }
       vim.keymap.set('n', '<leader>ps', '<cmd>PossessionSave<CR>', { noremap = true, silent = true, desc = '[P]ossession [S]ave' })
       vim.keymap.set('n', '<leader>pc', '<cmd>PossessionClose<CR>', { noremap = true, silent = true, desc = '[P]ossession [C]lose' })
       vim.keymap.set('n', '<leader>pl', '<cmd>Telescope possession list<CR>', { noremap = true, silent = true, desc = '[P]ossession [L]ist' })
@@ -640,6 +646,9 @@ require('lazy').setup({
           git_branches = {
             theme = 'ivy',
           },
+          buffers = {
+            theme = 'ivy',
+          },
           find_files = {
             theme = 'ivy',
             find_command = {
@@ -691,6 +700,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>so', builtin.oldfiles, { desc = '[S]earch Recent Files' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch file [E]xplorer' })
       vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[S]earch file explorer: [C]urrent location' })
@@ -1023,7 +1033,7 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettier', 'prettierd', stop_after_first = false },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -1141,11 +1151,11 @@ require('lazy').setup({
             group_index = 0,
           },
           { name = 'vim-dadbod-completion' },
-          { name = 'cmp_yanky' },
           { name = 'nvim_lua' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'cmp_yanky' },
         },
         formatting = {
           format = lspkind.cmp_format {
@@ -1170,6 +1180,9 @@ require('lazy').setup({
           { name = 'vim-dadbod-completion' },
           { name = 'buffer' },
         },
+      })
+      cmp.setup.filetype({ 'markdown' }, {
+        enabled = false,
       })
 
       cmp.setup.cmdline('/', {
@@ -1275,15 +1288,13 @@ require('lazy').setup({
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = 'gnn',
-          node_incremental = 'grn',
-          scope_incremental = 'grc',
-          node_decremental = 'grm',
+          -- init_selection = 'gnn',
+          node_incremental = 'v',
+          node_decremental = 'V',
         },
       },
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
+      ensure_installed = { 'bash', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      auto_install = false,
       highlight = {
         enable = true,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
@@ -1297,7 +1308,6 @@ require('lazy').setup({
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 

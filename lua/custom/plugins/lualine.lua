@@ -43,7 +43,8 @@ local function config_lualine(colors)
 
   local filename = {
     'filename',
-    path = 4,
+    path = 1,
+    file_status = true,
     color = { bg = colors.green, fg = colors.bg, gui = 'bold' },
     separator = { left = '', right = '' },
   }

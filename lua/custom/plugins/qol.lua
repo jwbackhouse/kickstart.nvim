@@ -16,8 +16,9 @@ return {
         timeout = 3000,
       },
       quickfile = { enabled = true },
+      scope = { enabled = true },
       scroll = { enabled = true, animate = {
-        duration = { step = 15, total = 150 },
+        duration = { step = 15, total = 100 },
       } },
       statuscolumn = {
         enabled = true,
@@ -63,11 +64,11 @@ return {
         desc = 'Notification History',
       },
       {
-        '<leader>bd',
+        '<leader>bc',
         function()
           Snacks.bufdelete()
         end,
-        desc = 'Delete Buffer',
+        desc = '[B]uffer [C]lose',
       },
       {
         '<leader>cR',
@@ -111,13 +112,6 @@ return {
           Snacks.lazygit.log()
         end,
         desc = 'Lazygit Reflog (cwd)',
-      },
-      {
-        '<leader>qn',
-        function()
-          Snacks.notifier.hide()
-        end,
-        desc = 'Dismiss All Notifications',
       },
       {
         '<c-/>',
