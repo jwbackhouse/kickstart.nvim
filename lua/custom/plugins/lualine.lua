@@ -25,7 +25,7 @@ local function config_lualine(colors)
   local theme = {
     normal = {
       a = { fg = colors.bg_dark, bg = colors.blue },
-      b = { fg = colors.blue, bg = colors.white },
+      b = { fg = colors.white, bg = '#2f354d' },
       c = { fg = colors.white, bg = colors.bg },
       z = { fg = colors.white, bg = colors.bg },
     },
@@ -45,8 +45,12 @@ local function config_lualine(colors)
     'filename',
     path = 1,
     file_status = true,
-    color = { bg = colors.green, fg = colors.bg, gui = 'bold' },
-    separator = { left = '', right = '' },
+    fmt = function(str)
+      local stringLength = string.len(str)
+      local max = 60
+      return (stringLength > max and '...' or '') .. str:sub(stringLength - max, stringLength)
+    end,
+    separator = { right = '' },
   }
 
   local inactive_winbar_filename = {
@@ -61,32 +65,30 @@ local function config_lualine(colors)
 
   local filetype = {
     'filetype',
-    icons_enabled = false,
-    color = { bg = colors.gray2, fg = colors.blue, gui = 'italic,bold' },
-    separator = { left = '', right = '' },
+    icon_only = true,
+    colored = false,
+    padding = { left = 2, right = 0 },
   }
 
   local branch = {
     'branch',
     icon = '',
-    color = { bg = colors.blue, fg = colors.bg, gui = 'bold' },
-    separator = { left = '', right = '' },
+    padding = { left = 1, right = 0 },
   }
 
   local location = {
     'location',
     color = { bg = colors.purple, fg = colors.bg, gui = 'bold' },
-    separator = { left = '', right = '' },
+    separator = { left = '' },
   }
 
   local diff = {
     'diff',
-    color = { bg = colors.gray2, fg = colors.bg, gui = 'bold' },
-    separator = { left = '', right = '' },
+    separator = { right = '' },
     symbols = { added = ' ', modified = ' ', removed = ' ' },
 
     diff_color = {
-      added = { fg = colors.green },
+      added = { fg = colors.teal },
       modified = { fg = colors.yellow },
       removed = { fg = colors.red },
     },
@@ -98,7 +100,7 @@ local function config_lualine(colors)
       local mode_color = modecolor
       return { bg = mode_color[vim.fn.mode()], fg = colors.bg_dark, gui = 'bold' }
     end,
-    separator = { left = '', right = '' },
+    separator = { right = '' },
   }
 
   local function getLspName()
@@ -157,12 +159,6 @@ local function config_lualine(colors)
     return '  ' .. language_servers
   end
 
-  -- local macro = {
-  --   require('noice').api.status.mode.get,
-  --   cond = require('noice').api.status.mode.has,
-  --   color = { fg = colors.red, bg = colors.bg_dark, gui = 'italic,bold' },
-  -- }
-
   local dia = {
     'diagnostics',
     sources = { 'nvim_diagnostic' },
@@ -205,33 +201,27 @@ local function config_lualine(colors)
         modes,
       },
       lualine_b = {
-        space,
+        filetype,
+        filename,
+        diff,
       },
       lualine_c = {
-        -- { 'filename', path = 1 },
-        filename,
-        -- filetype,
-        space,
         branch,
-        diff,
-        space,
       },
       lualine_x = {
         space,
       },
       lualine_y = { space },
-      -- lualine_y = { space },
       lualine_z = {
-        location,
         dia,
-        -- lsp,
+        location,
       },
     },
     inactive_sections = {
       lualine_a = {},
       lualine_b = {},
-      lualine_c = { 'filename' },
-      lualine_x = { 'location' },
+      lualine_c = {},
+      lualine_x = {},
       lualine_y = {},
       lualine_z = {},
     },
