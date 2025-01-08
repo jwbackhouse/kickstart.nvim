@@ -25,7 +25,7 @@ local function config_lualine(colors)
   local theme = {
     normal = {
       a = { fg = colors.bg_dark, bg = colors.blue },
-      b = { fg = colors.white, bg = '#2f354d' },
+      b = { fg = colors.white, bg = colors.bg_mid },
       c = { fg = colors.white, bg = colors.bg },
       z = { fg = colors.white, bg = colors.bg },
     },
@@ -245,10 +245,12 @@ local function config_lualine(colors)
 end
 
 local function update_mode_colors(is_dark_mode)
+  ---@class Palette
   local colors = is_dark_mode and require 'tokyonight.colors.storm' or require('tokyonight.colors').setup { style = 'day' }
+  colors.bg_mid = '#2f354d'
 
   if not is_dark_mode then
-    colors.bg = colors.bg_dark1
+    colors.bg_mid = colors.bg_dark1
   end
 
   config_lualine(colors)

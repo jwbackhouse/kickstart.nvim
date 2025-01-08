@@ -310,6 +310,9 @@ require('lazy').setup({
         symbol_in_winbar = {
           enable = false,
         },
+        rename = {
+          in_select = false,
+        },
       }
     end,
   },
@@ -460,6 +463,7 @@ require('lazy').setup({
         },
       }
       vim.keymap.set('n', '<leader>ps', '<cmd>PossessionSave<CR>', { noremap = true, silent = true, desc = '[P]ossession [S]ave' })
+      vim.keymap.set('n', '<leader>pd', '<cmd>PossessionDelete<CR>', { noremap = true, silent = true, desc = '[P]ossession [D]elete' })
       vim.keymap.set('n', '<leader>pc', '<cmd>PossessionClose<CR>', { noremap = true, silent = true, desc = '[P]ossession [C]lose' })
       vim.keymap.set('n', '<leader>pl', '<cmd>Telescope possession list<CR>', { noremap = true, silent = true, desc = '[P]ossession [L]ist' })
     end,
@@ -638,7 +642,6 @@ require('lazy').setup({
           },
           find_command = { 'fd', '--type', 'f', '--hidden', '--no-ignore' },
         },
-
         pickers = {
           oldfiles = {
             theme = 'ivy',
@@ -657,6 +660,9 @@ require('lazy').setup({
               '--hidden',
               '--no-require-git',
             },
+          },
+          lsp_references = {
+            theme = 'ivy',
           },
         },
         extensions = {
@@ -945,7 +951,7 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -1254,29 +1260,18 @@ require('lazy').setup({
       require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      -- --  and try some other statusline plugin
-      -- local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      -- statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      -- ---@diagnostic disable-next-line: duplicate-set-field
-      -- statusline.section_location = function()
-      --   return '%2l:%-2v'
-      -- end
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
+      -- Highlight hex colours
+      local hipatterns = require 'mini.hipatterns'
+      hipatterns.setup {
+        highlighters = {
+          hex_color = hipatterns.gen_highlighter.hex_color { style = 'full' },
+        },
+      }
     end,
   },
   { -- Highlight, edit, and navigate code
@@ -1289,8 +1284,8 @@ require('lazy').setup({
         enable = true,
         keymaps = {
           -- init_selection = 'gnn',
-          node_incremental = 'v',
-          node_decremental = 'V',
+          node_incremental = '<BS>',
+          node_decremental = '<S-BS>',
         },
       },
       ensure_installed = { 'bash', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
@@ -1311,12 +1306,6 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
