@@ -232,7 +232,6 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- JB plugins
-  { 'onsails/lspkind.nvim' },
   { 'github/copilot.vim', event = 'VeryLazy' },
   {
     'CopilotC-Nvim/CopilotChat.nvim',
@@ -1296,7 +1295,17 @@ require('lazy').setup({
     name = 'oldworld',
     lazy = true,
   },
-  { 'rmehri01/onenord.nvim', name = 'onenord', lazy = true },
+  {
+    'rmehri01/onenord.nvim',
+    name = 'onenord',
+    lazy = true,
+    init = function()
+      vim.o.termguicolors = true
+      vim.cmd.colorscheme 'onenord'
+      -- You can configure highlights by doing something like:
+      -- vim.cmd.hi 'Comment gui=none'
+    end,
+  },
   { 'catppuccin/nvim', name = 'catppuccin', lazy = true },
 
   -- Highlight todo, notes, etc in comments

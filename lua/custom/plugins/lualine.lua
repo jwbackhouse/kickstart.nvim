@@ -73,7 +73,7 @@ local function config_lualine(colors)
   local branch = {
     'branch',
     icon = '',
-    padding = { left = 1, right = 0 },
+    padding = { left = 2, right = 0 },
   }
 
   local location = {
@@ -98,7 +98,7 @@ local function config_lualine(colors)
     'mode',
     color = function()
       local mode_color = modecolor
-      return { bg = mode_color[vim.fn.mode()], fg = colors.bg_dark, gui = 'bold' }
+      return { bg = mode_color[vim.fn.mode()], fg = colors.bg_dark }
     end,
     separator = { right = '' },
   }
@@ -246,11 +246,20 @@ end
 
 local function update_mode_colors(is_dark_mode)
   ---@class Palette
-  local colors = is_dark_mode and require 'tokyonight.colors.storm' or require('tokyonight.colors').setup { style = 'day' }
-  colors.bg_mid = '#2f354d'
+  local colors
 
-  if not is_dark_mode then
-    colors.bg_mid = colors.bg_dark1
+  vim.o.background = is_dark_mode and 'dark' or 'light'
+
+  if vim.g.colors_name == 'onenord' then
+    colors = require('onenord.colors').load()
+    colors.bg_dark = colors.bg
+    colors.bg_mid = '#40485C'
+  else
+    colors = is_dark_mode and require 'tokyonight.colors.storm' or require('tokyonight.colors').setup { style = 'day' }
+    colors.bg_mid = '#2f354d'
+    if not is_dark_mode then
+      colors.bg_mid = colors.bg_dark1
+    end
   end
 
   config_lualine(colors)
@@ -261,7 +270,13 @@ return {
   'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons', 'folke/tokyonight.nvim' },
   config = function()
-    local colors = require 'tokyonight.colors.storm'
+    ---@class Palette
+    local colors
+    if vim.g.colors_name == 'onenord' then
+      colors = require('onenord.colors').load()
+    else
+      colors = require 'tokyonight.colors.storm'
+    end
     config_lualine(colors)
   end,
   update_mode_colors = update_mode_colors,
