@@ -110,7 +110,7 @@ vim.keymap.set('i', '<D-s>', '<Esc>:w<CR>', { noremap = true, silent = true, des
 -- Diagnostics
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, default_options)
 -- Remove unused imports
-vim.keymap.set('n', "<D-S-'>", ':TSToolsRemoveUnusedImports<CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
+vim.keymap.set('n', "<D-S-'>", ':VtsExec remove_unused_imports<CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
 -- Cycle through buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true, desc = 'Next buffer' })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'Previous buffer' })
@@ -740,6 +740,9 @@ require('lazy').setup({
   },
   { 'Bilal2453/luvit-meta', lazy = true },
   {
+    'yioneko/nvim-vtsls',
+  },
+  {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -753,9 +756,15 @@ require('lazy').setup({
       { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by nvim-cmp
-      'hrsh7th/cmp-nvim-lsp',
+      -- 'hrsh7th/cmp-nvim-lsp',
+      'saghen/blink.cmp',
     },
     config = function()
+      local capabilities = require('blink.cmp').get_lsp_capabilities()
+      require('lspconfig').lua_ls.setup { capabilities = capabilities }
+      require('lspconfig').vtsls.setup {
+        capabilities = capabilities,
+      }
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -808,7 +817,10 @@ require('lazy').setup({
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gI', ':VtsExec goto_source_definition<CR>', '[G]oto [I]mplementation')
+
+          -- This is a TS-only feature
+          map('<leader>dr', ':VtsExec rename_file<CR>', '[D]ocument [R]ename')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -840,29 +852,29 @@ require('lazy').setup({
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          -- local client = vim.lsp.get_client_by_id(event.data.client_id)
-          -- if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-          --   local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-          -- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          --   buffer = event.buf,
-          --   group = highlight_augroup,
-          --   callback = vim.lsp.buf.document_highlight,
-          -- })
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            -- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+            --   buffer = event.buf,
+            --   group = highlight_augroup,
+            --   callback = vim.lsp.buf.document_highlight,
+            -- })
 
-          --   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-          --     buffer = event.buf,
-          --     group = highlight_augroup,
-          --     callback = vim.lsp.buf.clear_references,
-          --   })
-          --
-          --   vim.api.nvim_create_autocmd('LspDetach', {
-          --     group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-          --     callback = function(event2)
-          --       vim.lsp.buf.clear_references()
-          --       vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-          --     end,
-          --   })
-          -- end
+            --   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+            --     buffer = event.buf,
+            --     group = highlight_augroup,
+            --     callback = vim.lsp.buf.clear_references,
+            --   })
+            --
+            --   vim.api.nvim_create_autocmd('LspDetach', {
+            --     group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+            --     callback = function(event2)
+            --       vim.lsp.buf.clear_references()
+            --       vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+            --     end,
+            --   })
+          end
 
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
@@ -880,8 +892,8 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+      -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -893,30 +905,33 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {
-        --
-        -- },
-        --
-        eslint = {},
-
+        -- ts_ls = {},
+        vtsls = {
+          settings = {
+            vstls = { experimental = {
+              completion = {
+                enableServerSideFuzzyMatch = true,
+              },
+            } },
+            typescript = {
+              tsserver = {
+                nodePath = '~/.config/nvim/run-electron-as-node',
+                -- nodePath = '/Applications/Electron.app/Contents/MacOs/Electron',
+                maxTsServerMemory = 8192,
+              },
+            },
+          },
+        },
+        eslint = {
+          flags = {
+            allow_incremental_sync = false,
+            debounce_text_changes = 1000,
+          },
+        },
         sqlls = {
           cmd = { '/Users/jamesbackhouse/.nvm/versions/node/v18.16.0/bin/sql-language-server', 'up', '--method', 'stdio' },
         },
-
         lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
           settings = {
             Lua = {
               completion = {
@@ -942,6 +957,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'vtsls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -963,6 +979,7 @@ require('lazy').setup({
 
   {
     'pmizio/typescript-tools.nvim',
+    enabled = false,
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
     event = 'VimEnter',
