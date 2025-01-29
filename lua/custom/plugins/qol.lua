@@ -1,3 +1,17 @@
+vim.keymap.set('n', '<C-d>', [[<Cmd>lua vim.cmd('normal! <C-d>'); MiniAnimate.execute_after('scroll', 'normal! zvzz')<CR>]])
+vim.keymap.set('n', '<C-u>', [[<Cmd>lua vim.cmd('normal! <C-u>'); MiniAnimate.execute_after('scroll', 'normal! zvzz')<CR>]])
+vim.keymap.set('n', 'G', 'Gzz', { noremap = true, silent = true })
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+vim.keymap.set('x', '<leader>v', [["_dP]])
+-- Don't write to register when hitting 'x'
+vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
+
+-- Auto resize splits when the terminal's window is resized
+vim.api.nvim_create_autocmd('VimResized', {
+  command = 'wincmd =',
+})
+
 return {
   {
     'folke/snacks.nvim',
@@ -17,7 +31,8 @@ return {
       },
       quickfile = { enabled = true },
       scope = { enabled = true },
-      scroll = { enabled = true, animate = {
+      scratch = { enabled = true },
+      scroll = { enabled = false, animate = {
         duration = { step = 15, total = 100 },
       } },
       statuscolumn = {
@@ -30,6 +45,7 @@ return {
         },
         git = {
           -- patterns to match Git signs
+          enabled = true,
           patterns = { 'GitSign', 'MiniDiffSign' },
         },
         refresh = 50, -- refresh at most every 50ms
@@ -70,13 +86,13 @@ return {
         end,
         desc = '[B]uffer [C]lose',
       },
-      {
-        '<leader>cR',
-        function()
-          Snacks.rename.rename_file()
-        end,
-        desc = 'Rename File',
-      },
+      -- {
+      --   '<leader>cR',
+      --   function()
+      --     Snacks.rename.rename_file()
+      --   end,
+      --   desc = 'Rename File',
+      -- },
       {
         '<leader>gB',
         function()
@@ -136,7 +152,7 @@ return {
         mode = { 'n', 't' },
       },
       {
-        '[[',
+        '[w',
         function()
           Snacks.words.jump(-vim.v.count1)
         end,

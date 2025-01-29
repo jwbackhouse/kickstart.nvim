@@ -1,8 +1,5 @@
 -- Git-related plugins
 return {
-  { 'f-person/git-blame.nvim', event = 'VeryLazy', opts = {
-    date_format = '%d-%m-%Y',
-  } },
   {
     'NeogitOrg/neogit',
     dependencies = {
@@ -40,6 +37,12 @@ return {
     opts = {
       numhl = true,
       signcolumn = true,
+      current_line_blame = true,
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'right_align',
+        delay = 500,
+      },
       signs = {
         add = { text = '┃' },
         change = { text = '┃' },
@@ -53,9 +56,10 @@ return {
 
   -- Keybindings
   vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>', { noremap = true, silent = true, desc = '[G]it [D]iffview' }),
-  vim.keymap.set('n', '<leader>gi', '<cmd>Gitsigns next_hunk<cr>', { noremap = true, silent = true, desc = '[G]it next hunk' }),
-  vim.keymap.set('n', '<leader>go', '<cmd>Gitsigns prev_hunk<cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
+  vim.keymap.set('n', ']h', '<cmd>Gitsigns next_hunk<cr>', { noremap = true, silent = true, desc = '[G]it next hunk' }),
+  vim.keymap.set('n', '[h', '<cmd>Gitsigns prev_hunk<cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
   vim.keymap.set('n', '<leader>gu', '<cmd>Gitsigns reset_hunk<cr>', { noremap = true, silent = true, desc = '[G]it [U]ndo hunk' }),
+  vim.keymap.set('n', '<leader>gw', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Revie[W] hunk' }),
   -- PRs
   vim.keymap.set('n', '<leader>gpo', '<cmd>GHOpenPR<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [O]pen' }),
   vim.keymap.set('n', '<leader>gpr', '<cmd>GHStartReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [R]eview start' }),

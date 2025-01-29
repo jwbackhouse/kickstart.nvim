@@ -1,9 +1,12 @@
 local M = {}
+local builtin = require 'telescope.builtin'
+local action_state = require 'telescope.actions.state'
 local pickers = require 'telescope.pickers'
 local finders = require 'telescope.finders'
 local make_entry = require 'telescope.make_entry'
 local conf = require('telescope.config').values
 
+-- Grep-in-fuzzy-directory
 local live_multigrep = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
@@ -47,5 +50,29 @@ end
 M.setup = function()
   vim.keymap.set('n', '<leader>sm', live_multigrep, { desc = '[S]earch [M]ulti Grep' })
 end
+
+-- Delete multiple buffers
+-- after https://github.com/nvim-telescope/telescope.nvim/issues/621
+vim.keymap.set('n', '<leader>sd', function()
+  builtin.buffers({
+    initial_mode = 'normal',
+    attach_mappings = function(prompt_bufnr, map)
+      local delete_buf = function()
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        current_picker:delete_selection(function(selection)
+          vim.api.nvim_buf_delete(selection.bufnr, { force = true })
+        end)
+      end
+
+      map('n', '<c-d>', delete_buf)
+
+      return true
+    end,
+  }, {
+    sort_lastused = true,
+    sort_mru = true,
+    theme = 'dropdown',
+  })
+end)
 
 return M

@@ -16,30 +16,18 @@ vim.g.have_nerd_font = true
 
 -- JB options
 vim.api.nvim_set_hl(0, 'CursorLine', { underline = true })
-require 'custom.settings.appearance'
 -- Only show status bar on current window
 vim.opt.laststatus = 3
 -- Prevent comments continuing on new line
 vim.cmd [[autocmd FileType * set formatoptions-=ro]]
--- Launch Telescope oldfiles on startup
--- vim.cmd [[autocmd VimEnter * Telescope oldfiles]]
 vim.opt.signcolumn = 'number'
 
 -- Folding
 vim.opt.foldlevel = 99 -- Start with all folds open
+-- vim.opt.foldlevelstart = 1 -- default to fold from level 1
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-vim.api.nvim_create_augroup('fmt', {})
--- vim.api.nvim_create_autocmd('BufWritePre', {
---   buffer = 0,
---   callback = function()
---     vim.cmd 'Neoformat'
---   end,
--- })
-vim.api.nvim_create_augroup('END', {})
-
--- vim.g.neoformat_only_msg_on_error = 0
--- vim.g.neoformat_try_node_exe = 1
+vim.opt.foldtext = ''
 
 -- Make line numbers default
 vim.opt.number = true
@@ -128,14 +116,6 @@ vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true, desc
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'Previous buffer' })
 -- Lspsaga
 vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silent = true, desc = '[R]e[n]ame' })
--- Builtin terminal
--- vim.api.nvim_create_autocmd('TermOpen', {
---   group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
---   callback = function()
---     vim.opt.number = false
---     vim.opt.relativenumber = false
---   end,
--- })
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
@@ -155,8 +135,8 @@ vim.keymap.set('n', '<C-K>', ':KittyNavigateUp <CR>', default_options)
 vim.keymap.set('n', '<C-L>', ':KittyNavigateRight <CR>', default_options)
 vim.keymap.set('n', '<C-H>', ':KittyNavigateLeft <CR>', default_options)
 -- window splits
-vim.keymap.set('n', '<leader>wv', ':vs<CR>', { noremap = true, silent = true, desc = '[w]indow [v]ertical split' })
-vim.keymap.set('n', '<leader>wh', ':split<CR>', { noremap = true, silent = true, desc = '[w]indow [h]orizontal split' })
+vim.keymap.set('n', '<leader>wv', ':vs<CR>', { noremap = true, silent = true, desc = '[W]indow [V]ertical split' })
+vim.keymap.set('n', '<leader>wh', ':split<CR>', { noremap = true, silent = true, desc = '[W]indow [H]orizontal split' })
 -- custom
 vim.keymap.set('n', '<leader>cl', function()
   require('custom.utils').quicklog()
@@ -176,6 +156,11 @@ end, { desc = '[O]pen in [F]inder' })
 vim.keymap.set('n', '[c', function()
   require('treesitter-context').go_to_context(vim.v.count1)
 end, { noremap = true, silent = true, desc = 'Previous context' })
+-- Disable default keymaps
+vim.keymap.set('n', '<F1>', '<nop>', { noremap = true, silent = true })
+-- Comments
+vim.keymap.set('n', '<D-/>', 'gcc', { remap = true, silent = true })
+vim.keymap.set('v', '<D-/>', 'gc', { remap = true, silent = true })
 
 -- Original
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -341,16 +326,21 @@ require('lazy').setup({
   {
     'folke/zen-mode.nvim',
     enabled = true,
-    opts = {
-      on_open = function(_)
-        vim.g.cmdheight = 0
-        vim.o.laststatus = 0
-      end,
-      on_close = function()
-        vim.g.cmdheight = 1
-        vim.o.laststatus = 3
-      end,
-    },
+    config = function()
+      -- local lualine = require 'lualine'
+      require('zen-mode').setup {
+        on_open = function(_)
+          -- lualine.hide {}
+          vim.g.cmdheight = 0
+          vim.o.laststatus = 0
+        end,
+        on_close = function()
+          -- lualine.hide { unhide = true }
+          vim.g.cmdheight = 1
+          vim.o.laststatus = 3
+        end,
+      }
+    end,
   },
   -- Symbols outline
   {
@@ -363,23 +353,10 @@ require('lazy').setup({
     opts = {
       outline_window = {
         wrap = true,
+        -- position = 'right',
+        split_command = 'rightbelow vs',
       },
-      -- Your setup opts here
     },
-  },
-  -- Neoformat for Prettier (from Phil)
-  {
-    'sbdchd/neoformat',
-    keys = {
-      -- {
-      --   '<leader>nf',
-      --   function()
-      --     vim.cmd 'Neoformat'
-      --     -- vim.cmd 'Format' -- runs vim.lsp.buf.format()
-      --   end,
-      -- },
-    },
-    event = 'VimEnter',
   },
   {
     'stevearc/oil.nvim',
@@ -664,6 +641,14 @@ require('lazy').setup({
           lsp_references = {
             theme = 'ivy',
           },
+          marks = {
+            attach_mappings = function(bufnr, map)
+              map('i', '<C-d>', function()
+                require('telescope.actions').delete_mark(bufnr)
+              end)
+              return true
+            end,
+          },
         },
         extensions = {
           ['ui-select'] = {
@@ -705,7 +690,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch by git [B]ranch' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>so', builtin.oldfiles, { desc = '[S]earch Recent Files' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch file [E]xplorer' })
@@ -736,20 +720,7 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
 
-      -- JB custom
-      vim.keymap.set('n', '<leader>sd', function()
-        local folder = vim.fn.input('Folder: ', '', 'file')
-        if folder and folder ~= '' then
-          builtin.live_grep {
-            search_dirs = { folder },
-          }
-          -- require('telescope.builtin').live_grep {
-          --   search_dirs = { folder },
-          -- }
-        end
-      end, { noremap = true, silent = true, desc = '[S]earch [D]irectory' })
-
-      require('custom.multigrep').setup()
+      require('custom.telescope').setup()
     end,
   },
 
@@ -763,6 +734,7 @@ require('lazy').setup({
       library = {
         -- Load luvit types when the `vim.uv` word is found
         { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+        { path = 'snacks.nvim', words = { 'Snacks' } },
       },
     },
   },
@@ -1000,52 +972,125 @@ require('lazy').setup({
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
-    -- keys = {
-    --   {
-    --     '<leader>f',
-    --     function()
-    --       require('conform').format { async = true, lsp_format = 'fallback' }
-    --     end,
-    --     mode = '',
-    --     desc = '[F]ormat buffer',
-    --   },
-    -- },
-    -- This will provide type hinting with LuaLS
     ---@module "conform"
     ---@type conform.setupOpts
     opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        -- local disable_filetypes = { c = true, cpp = true }
-        -- local lsp_format_opt
-        -- if disable_filetypes[vim.bo[bufnr].filetype] then
-        --   lsp_format_opt = 'never'
-        -- else
-        --   lsp_format_opt = 'fallback'
-        -- end
-        return {
-          timeout_ms = 2500,
-          -- lsp_format = lsp_format_opt,
-          lsp_fallback = false,
-        }
-      end,
+      notify_on_error = true,
+      default_format_opts = {
+        lsp_format = 'fallback',
+      },
+      format_on_save = {
+        timeout_ms = 500,
+      },
+      format_after_save = {
+        timeout_ms = 2500,
+      },
+
+      -- format_on_save = function(bufnr)
+      --   return {
+      --     timeout_ms = 2500,
+      --     -- lsp_format = lsp_format_opt,
+      --     lsp_fallback = false,
+      --   }
+      -- end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        sql = { 'sql_formatter' },
       },
     },
   },
+  {
+    'saghen/blink.cmp',
+    dependencies = {
+      'kristijanhusak/vim-dadbod-completion',
+      'rafamadriz/friendly-snippets',
+      {
+        'L3MON4D3/LuaSnip',
+        version = 'v2.*',
+        build = 'make install_jsregexp',
+        dependencies = {
+          'rafamadriz/friendly-snippets',
+          config = function()
+            require('luasnip.loaders.from_vscode').lazy_load()
+            require('luasnip.loaders.from_vscode').lazy_load { paths = { vim.fn.stdpath 'config' .. '/snippets' } }
 
+            local extends = {
+              typescript = { 'tsdoc' },
+              javascript = { 'jsdoc' },
+              lua = { 'luadoc' },
+              sh = { 'shelldoc' },
+            }
+            -- friendly-snippets - enable standardized comments snippets
+            for ft, snips in pairs(extends) do
+              require('luasnip').filetype_extend(ft, snips)
+            end
+
+            local ls = require 'luasnip'
+            local types = require 'luasnip.util.types'
+
+            ls.config.set_config {
+              history = true,
+              -- Allows updating inside dynamic snippets
+              updateevents = 'TextChanged,TextChangedI',
+              ext_opts = {
+                [types.choiceNode] = {
+                  active = {
+                    virt_text = { { '<--', 'Error' } },
+                  },
+                },
+              },
+            }
+          end,
+        },
+        opts = { history = true, delete_check_events = 'TextChanged' },
+      },
+    },
+
+    version = '*',
+
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+      -- 'default' for mappings similar to built-in completion
+      -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
+      -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+      keymap = { preset = 'default' },
+      appearance = {
+        use_nvim_cmp_as_default = true,
+        nerd_font_variant = 'mono',
+      },
+      completion = {
+        accept = { auto_brackets = { enabled = true } },
+        -- list = { selection = { preselect = true, auto_insert = true } },
+        menu = {
+          draw = { treesitter = { 'lsp' } },
+        },
+      },
+      snippets = { preset = 'luasnip' },
+      -- Default list of enabled providers defined so that you can extend it
+      -- elsewhere in your config, without redefining it, due to `opts_extend`
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'lazydev', 'dadbod', 'codecompanion' },
+        per_filetype = {
+          typr = {},
+        },
+        providers = {
+          lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
+          path = { opts = { show_hidden_files_by_default = true } },
+          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+        },
+      },
+      signature = { enabled = true, window = { border = 'rounded' } },
+    },
+    opts_extend = { 'sources.default' },
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
+    enabled = false,
     event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
@@ -1216,25 +1261,17 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  {
     'folke/tokyonight.nvim',
     enabled = true,
     lazy = true,
     -- priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.o.termguicolors = true
-      vim.cmd.colorscheme 'tokyonight-storm'
-
-      -- You can configure highlights by doing something like:
-      -- vim.cmd.hi 'Comment gui=none'
-    end,
+    -- init = function()
+    --   vim.o.termguicolors = true
+    --   vim.cmd.colorscheme 'tokyonight-storm'
+    --   -- You can configure highlights by doing something like:
+    --   -- vim.cmd.hi 'Comment gui=none'
+    -- end,
   },
   -- JB themes
   {
@@ -1262,8 +1299,18 @@ require('lazy').setup({
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
+      -- - sr)'  - [S]urround [R]eplac [)] [']
       require('mini.surround').setup()
+      require('mini.diff').setup()
+      require('mini.pairs').setup()
+      local animate = require 'mini.animate'
+      animate.setup {
+        scroll = { enable = true, timing = animate.gen_timing.linear { duration = 70, unit = 'total' } },
+        resize = { enable = false },
+        open = { enable = false },
+        close = { enable = false },
+        cursor = { enable = false },
+      }
 
       -- Highlight hex colours
       local hipatterns = require 'mini.hipatterns'
@@ -1312,7 +1359,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  require 'kickstart.plugins.autopairs',
+  -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -1350,14 +1397,11 @@ require('lazy').setup({
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
--- Automatically run :Prettier on file save for supported filetypes
 vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = { '*.tsx', '*.ts', '*.json' }, -- Add your desired file patterns
+  pattern = { '*.tsx', '*.ts', '*.json' },
   callback = function(args)
     vim.cmd 'EslintFixAll'
-    require('conform').format { bufnr = args.buf }
-    vim.cmd 'Neoformat'
-    -- vim.cmd '!eslint --fix %'
+    -- require('conform').format { bufnr = args.buf }
   end,
 })
 
@@ -1377,3 +1421,5 @@ if not configs.osocloud then
   }
 end
 lspconfig.osocloud.setup {}
+
+require 'custom.settings.appearance'
