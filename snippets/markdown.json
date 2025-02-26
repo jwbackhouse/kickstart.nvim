@@ -1,0 +1,14 @@
+{
+  "pr": {
+    "prefix": "pr",
+    "body": [
+      "### Ticket",
+      "",
+      "[${1:ticket}]",
+      "",
+      "### Description",
+      "",
+      "${3:description}"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "foo2": {
+    "prefix": "foo2",
+    "body": [
+      "local ${1:foo} = ${2:bar}",
+      "return ${3:baz}"
+    ]
+  }
+}

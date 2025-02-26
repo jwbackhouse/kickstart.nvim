@@ -1037,46 +1037,54 @@ require('lazy').setup({
     dependencies = {
       'kristijanhusak/vim-dadbod-completion',
       'rafamadriz/friendly-snippets',
-      {
-        'L3MON4D3/LuaSnip',
-        version = 'v2.*',
-        build = 'make install_jsregexp',
-        dependencies = {
-          'rafamadriz/friendly-snippets',
-          config = function()
-            require('luasnip.loaders.from_vscode').lazy_load()
-            require('luasnip.loaders.from_vscode').lazy_load { paths = { vim.fn.stdpath 'config' .. '/snippets' } }
-
-            local extends = {
-              typescript = { 'tsdoc' },
-              javascript = { 'jsdoc' },
-              lua = { 'luadoc' },
-              sh = { 'shelldoc' },
-            }
-            -- friendly-snippets - enable standardized comments snippets
-            for ft, snips in pairs(extends) do
-              require('luasnip').filetype_extend(ft, snips)
-            end
-
-            local ls = require 'luasnip'
-            local types = require 'luasnip.util.types'
-
-            ls.config.set_config {
-              history = true,
-              -- Allows updating inside dynamic snippets
-              updateevents = 'TextChanged,TextChangedI',
-              ext_opts = {
-                [types.choiceNode] = {
-                  active = {
-                    virt_text = { { '<--', 'Error' } },
-                  },
-                },
-              },
-            }
-          end,
-        },
-        opts = { history = true, delete_check_events = 'TextChanged' },
-      },
+      --      {
+      --        'L3MON4D3/LuaSnip',
+      --        version = 'v2.*',
+      -- }
+      -- build = 'make install_jsregexp',
+      --   dependencies = {
+      --     'rafamadriz/friendly-snippets',
+      --     config = function()
+      --       require('luasnip.loaders.from_vscode').lazy_load()
+      --       require('luasnip.loaders.from_vscode').lazy_load { paths = { vim.fn.stdpath 'config' .. '/snippets' } }
+      --
+      --       local extends = {
+      --         typescript = { 'tsdoc' },
+      --         javascript = { 'jsdoc' },
+      --         lua = { 'luadoc' },
+      --         sh = { 'shelldoc' },
+      --       }
+      --       -- friendly-snippets - enable standardized comments snippets
+      --       for ft, snips in pairs(extends) do
+      --         require('luasnip').filetype_extend(ft, snips)
+      --       end
+      --
+      --       local ls = require 'luasnip'
+      --       local types = require 'luasnip.util.types'
+      --
+      --       ls.config.set_config {
+      --         history = true,
+      --         -- Allows updating inside dynamic snippets
+      --         updateevents = 'TextChanged,TextChangedI',
+      --         ext_opts = {
+      --           [types.choiceNode] = {
+      --             active = {
+      --               virt_text = { { '<--', 'Error' } },
+      --             },
+      --           },
+      --         },
+      --       }
+      --
+      --       ls.snippets = {
+      --         all = {
+      --           ls.parser.parse_snippet('expand', 'this is what was expanded!'),
+      --         },
+      --         lua = {},
+      --       }
+      --     end,
+      --   },
+      --   opts = { history = true, delete_check_events = 'TextChanged' },
+      -- },
     },
 
     version = '*',
@@ -1099,7 +1107,7 @@ require('lazy').setup({
           draw = { treesitter = { 'lsp' } },
         },
       },
-      snippets = { preset = 'luasnip' },
+      -- snippets = { preset = 'luasnip' },
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
