@@ -8,6 +8,13 @@ return {
       'nvim-telescope/telescope.nvim', -- optional
     },
     config = true,
+    opts = {
+      kind = 'floating',
+      integrations = {
+        diffview = true,
+        telescope = true,
+      },
+    },
   },
   {
     'ldelossa/gh.nvim',

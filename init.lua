@@ -15,7 +15,7 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 -- JB options
-vim.api.nvim_set_hl(0, 'CursorLine', { underline = true })
+-- vim.api.nvim_set_hl(0, 'CursorLine', { underline = true })
 -- Only show status bar on current window
 vim.opt.laststatus = 3
 -- Prevent comments continuing on new line
@@ -23,8 +23,15 @@ vim.cmd [[autocmd FileType * set formatoptions-=ro]]
 vim.opt.signcolumn = 'number'
 
 -- Folding
-vim.opt.foldlevel = 99 -- Start with all folds open
--- vim.opt.foldlevelstart = 1 -- default to fold from level 1
+-- vim.opt.foldlevel = 99 -- Start with all folds open
+vim.opt.foldnestmax = 4
+vim.opt.foldlevelstart = 3
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'typescriptreact',
+  callback = function()
+    vim.opt.foldlevelstart = 5
+  end,
+})
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldtext = ''
@@ -85,11 +92,9 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+-- vim.opt.scrolloff = 0
 
 -- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
-
 -- JB keymaps
 local default_options = { noremap = true, silent = true }
 -- Remap Ctrl-i to move up by half a page
@@ -97,7 +102,7 @@ local default_options = { noremap = true, silent = true }
 -- Map 'jj' to exit insert mode
 vim.keymap.set('i', 'jj', '<Esc>', default_options)
 -- Map Command-i to run :CopilotChat
-vim.keymap.set({ 'v', 'n' }, '<D-i>', ':CopilotChat<cr>', default_options)
+-- vim.keymap.set({ 'v', 'n' }, '<D-i>', ':CopilotChat<cr>', default_options)
 -- copilot - replace tab for accepting suggestions
 -- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
 --   expr = true,
@@ -238,7 +243,7 @@ require('lazy').setup({
     branch = 'main',
     dependencies = {
       { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
-      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+      { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log wrapper
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
@@ -881,34 +886,8 @@ require('lazy').setup({
           --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-          -- The following two autocommands are used to highlight references of the
-          -- word under your cursor when your cursor rests there for a little while.
-          --    See `:help CursorHold` for information about when this is executed
-          --
-          -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-            -- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            --   buffer = event.buf,
-            --   group = highlight_augroup,
-            --   callback = vim.lsp.buf.document_highlight,
-            -- })
-
-            --   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            --     buffer = event.buf,
-            --     group = highlight_augroup,
-            --     callback = vim.lsp.buf.clear_references,
-            --   })
-            --
-            --   vim.api.nvim_create_autocmd('LspDetach', {
-            --     group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-            --     callback = function(event2)
-            --       vim.lsp.buf.clear_references()
-            --       vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-            --     end,
-            --   })
-          end
+          -- Prevent highlighting word under cursor
+          vim.lsp.handlers['textDocument/documentHighlight'] = function() end
 
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
@@ -1316,12 +1295,10 @@ require('lazy').setup({
     enabled = true,
     lazy = true,
     -- priority = 1000, -- Make sure to load this before all the other start plugins.
-    -- init = function()
-    --   vim.o.termguicolors = true
-    --   vim.cmd.colorscheme 'tokyonight-storm'
-    --   -- You can configure highlights by doing something like:
-    --   -- vim.cmd.hi 'Comment gui=none'
-    -- end,
+    init = function()
+      vim.o.termguicolors = true
+      vim.cmd.colorscheme 'tokyonight-storm'
+    end,
   },
   -- JB themes
   {
@@ -1333,54 +1310,14 @@ require('lazy').setup({
     'rmehri01/onenord.nvim',
     name = 'onenord',
     lazy = true,
-    init = function()
-      vim.o.termguicolors = true
-      vim.cmd.colorscheme 'onenord'
-      -- You can configure highlights by doing something like:
-      -- vim.cmd.hi 'Comment gui=none'
-    end,
+    -- init = function()
+    --   vim.o.termguicolors = true
+    --   vim.cmd.colorscheme 'onenord'
+    -- end,
   },
-  { 'catppuccin/nvim', name = 'catppuccin', lazy = true },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-  { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
-    config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
-      --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-      --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplac [)] [']
-      require('mini.surround').setup()
-      require('mini.diff').setup()
-      require('mini.pairs').setup()
-      local animate = require 'mini.animate'
-      animate.setup {
-        scroll = { enable = true, timing = animate.gen_timing.linear { duration = 70, unit = 'total' } },
-        resize = { enable = false },
-        open = { enable = false },
-        close = { enable = false },
-        cursor = { enable = false },
-      }
-
-      -- Highlight hex colours
-      local hipatterns = require 'mini.hipatterns'
-      hipatterns.setup {
-        highlighters = {
-          hex_color = hipatterns.gen_highlighter.hex_color { style = 'full' },
-        },
-      }
-    end,
-  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1460,7 +1397,9 @@ require('lazy').setup({
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = { '*.tsx', '*.ts', '*.json' },
   callback = function(args)
-    vim.cmd 'EslintFixAll'
+    if vim.fn.exists 'EslintFixAll' then
+      vim.cmd 'EslintFixAll'
+    end
     -- require('conform').format { bufnr = args.buf }
   end,
 })

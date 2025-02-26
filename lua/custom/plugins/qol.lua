@@ -4,6 +4,8 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('x', '<leader>v', [["_dP]])
 -- Don't write to register when hitting 'x'
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
+-- Select all :)
+vim.keymap.set('n', '<D-a>', 'ggVG', { noremap = true, silent = true })
 
 -- Auto resize splits when the terminal's window is resized
 vim.api.nvim_create_autocmd('VimResized', {
@@ -282,5 +284,87 @@ return {
         end,
       })
     end,
+  },
+  {
+    'echasnovski/mini.nvim',
+    config = function()
+      -- Better Around/Inside textobjects
+      --  - va)  - [V]isually select [A]round [)]paren
+      --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
+      --  - ci'  - [C]hange [I]nside [']quote
+      require('mini.ai').setup { n_lines = 500 }
+
+      -- Add/delete/replace surroundings (brackets, quotes, etc.)
+      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+      -- - sd'   - [S]urround [D]elete [']quotes
+      -- - sr)'  - [S]urround [R]eplac [)] [']
+      require('mini.surround').setup()
+      require('mini.diff').setup()
+      -- require('mini.pairs').setup()
+      local animate = require 'mini.animate'
+      animate.setup {
+        scroll = { enable = true, timing = animate.gen_timing.linear { duration = 70, unit = 'total' } },
+        resize = { enable = false },
+        open = { enable = false },
+        close = { enable = false },
+        cursor = { enable = false },
+      }
+
+      -- Highlight hex colours
+      local hipatterns = require 'mini.hipatterns'
+      hipatterns.setup {
+        highlighters = {
+          hex_color = hipatterns.gen_highlighter.hex_color { style = 'full' },
+        },
+      }
+    end,
+  },
+  {
+    'nullromo/go-up.nvim',
+    opts = {
+      goUpLimit = 'center',
+    },
+    config = function(_, opts)
+      local goUp = require 'go-up'
+      goUp.setup(opts)
+    end,
+    init = function()
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'VeryLazy',
+        callback = function()
+          vim.keymap.set('n', '<C-d>', [[<Cmd>lua vim.cmd('normal! <C-d>'); MiniAnimate.execute_after('scroll', require('go-up').centerScreen)<CR>]])
+          vim.keymap.set('n', '<C-u>', [[<Cmd>lua vim.cmd('normal! <C-u>'); MiniAnimate.execute_after('scroll', require('go-up').centerScreen)<CR>]])
+        end,
+      })
+    end,
+  },
+  {
+    'OXY2DEV/helpview.nvim',
+    lazy = false,
+    opts = {
+      preview = {
+        icon_provider = 'devicons',
+      },
+    },
+  },
+  {
+    'rachartier/tiny-inline-diagnostic.nvim',
+    event = 'VeryLazy', -- Or `LspAttach`
+    priority = 1000, -- needs to be loaded in first
+    config = function()
+      require('tiny-inline-diagnostic').setup {
+        options = {
+          multilines = true,
+        },
+        disabled_ft = {},
+      }
+      vim.diagnostic.config { virtual_text = false } -- Only if needed in your configuration, if you already have native LSP diagnostics
+    end,
+  },
+  {
+    'altermo/ultimate-autopair.nvim',
+    event = { 'InsertEnter', 'CmdlineEnter' },
+    branch = 'v0.6', --recommended as each new version will have breaking changes
+    opts = {},
   },
 }

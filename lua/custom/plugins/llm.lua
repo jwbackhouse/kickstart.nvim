@@ -33,5 +33,8 @@ return {
         },
       },
     }
+
+    vim.keymap.set({ 'n', 'v' }, '<D-i>', '<Cmd>CodeCompanionActions<CR>', { noremap = true, silent = true })
+    vim.cmd [[cab cc CodeCompanion]] -- map cc to CodeCompanion in command line
   end,
 }
