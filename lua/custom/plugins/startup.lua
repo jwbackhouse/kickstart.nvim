@@ -91,11 +91,12 @@ return {
       }))
       dashboard.section.buttons.val = {
         dashboard.button('e', ' ' .. ' New file', ':enew <BAR> startinsert <CR>'),
-        dashboard.button('o', '󰄉 ' .. ' Recent files', ':Telescope oldfiles <CR>'),
-        dashboard.button('f', ' ' .. ' Find files', ':Telescope find_files<cr>'),
-        dashboard.button('g', ' ' .. ' Find text', ':Telescope live_grep <CR>'),
-        dashboard.button('b', ' ' .. ' Git branches', ':Telescope git_branches <CR>'),
+        dashboard.button('o', '󰄉 ' .. ' Recent files', ":lua Snacks.picker.recent({layout = 'dropdown' }) <CR>"),
+        dashboard.button('f', ' ' .. ' Find files', ':lua Snacks.picker.smart() <CR>'),
+        dashboard.button('g', ' ' .. ' Find text', ':lua Snacks.picker.grep() <CR>'),
+        dashboard.button('b', ' ' .. ' Git branches', ':lua Snacks.picker.git_branches({layout = "vscode"}) <CR>'),
         dashboard.button('c', ' ' .. ' Config', ':e ~/.config/nvim/init.lua<CR>'),
+        dashboard.button('t', ' ' .. ' Typing', ':Typr <CR>'),
         dashboard.button('q', ' ' .. ' Quit', ':qa<CR>'),
         (function()
           local group = { type = 'group', opts = { spacing = 0 } }

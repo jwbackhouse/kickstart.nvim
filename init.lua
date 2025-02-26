@@ -707,18 +707,20 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', function()
-        local opts = require('telescope.themes').get_ivy() -- duplicates default, but shows how to change
-        builtin.find_files(opts)
-      end, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', ':Telescope frecency<CR>', { desc = '[S]earch [F]recency' })
+      vim.keymap.set('n', '<leader>sl', function()
+        -- local opts = require('telescope.themes').get_ivy() -- duplicates default, but shows how to change
+        -- builtin.find_files(opts)
+        builtin.find_files()
+      end, { desc = '[S]earch Fi[L]es' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch by git [B]ranch' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      -- vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>so', builtin.oldfiles, { desc = '[S]earch Recent Files' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>se', ':Telescope file_browser<CR>', { desc = '[S]earch file [E]xplorer' })
       vim.keymap.set('n', '<leader>sc', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[S]earch file explorer: [C]urrent location' })
 
@@ -837,10 +839,15 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          -- map('gd', function()
+          --   local results = require('telescope.builtin').lsp_definitions()
+          --   if results and #results > 0 then
+          --     vim.cmd 'normal! zz'
+          --   end
+          -- end, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          -- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.

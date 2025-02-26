@@ -1,5 +1,3 @@
-vim.keymap.set('n', '<C-d>', [[<Cmd>lua vim.cmd('normal! <C-d>'); MiniAnimate.execute_after('scroll', 'normal! zvzz')<CR>]])
-vim.keymap.set('n', '<C-u>', [[<Cmd>lua vim.cmd('normal! <C-u>'); MiniAnimate.execute_after('scroll', 'normal! zvzz')<CR>]])
 vim.keymap.set('n', 'G', 'Gzz', { noremap = true, silent = true })
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
@@ -23,18 +21,25 @@ return {
       bigfile = { enabled = false },
       dashboard = { enabled = false },
       indent = { enabled = true },
-      ---@class snacks.indent.Config
       input = { enabled = true },
+      lazygit = {},
+      picker = {
+        -- layout = 'dropdown',
+      },
+      explorer = {},
       notifier = {
         enabled = true,
         timeout = 3000,
       },
       quickfile = { enabled = true },
-      scope = { enabled = true },
-      scratch = { enabled = true },
-      scroll = { enabled = false, animate = {
-        duration = { step = 15, total = 100 },
-      } },
+      scope = { enabled = false },
+      scratch = { enabled = false },
+      scroll = {
+        enabled = false,
+        animate = {
+          duration = { step = 15, total = 100 },
+        },
+      },
       statuscolumn = {
         enabled = true,
         left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
@@ -50,6 +55,7 @@ return {
         },
         refresh = 50, -- refresh at most every 50ms
       },
+      toggle = { enabled = true },
       words = { enabled = true },
       styles = {
         notification = {
@@ -59,25 +65,112 @@ return {
     },
     keys = {
       {
-        '<leader>.',
-        function()
-          Snacks.scratch()
-        end,
-        desc = 'Toggle Scratch Buffer',
-      },
-      {
-        '<leader>S',
-        function()
-          Snacks.scratch.select()
-        end,
-        desc = 'Select Scratch Buffer',
-      },
-      {
         '<leader>qn',
         function()
           Snacks.notifier.show_history()
         end,
-        desc = 'Notification History',
+        desc = '[Q]ol [N]otification History',
+      },
+      {
+        '<leader>gx',
+        function()
+          Snacks.picker.git_log()
+        end,
+        desc = '[G]it Log Picker [X]',
+      },
+      {
+        '<leader>fn',
+        function()
+          Snacks.picker.lines()
+        end,
+        desc = '[F]ind In L[I]nes',
+      },
+      {
+        '<leader>gb',
+        function()
+          Snacks.picker.git_branches {
+            layout = 'vscode',
+          }
+        end,
+        desc = '[G]it [B]ranches',
+      },
+      {
+        '<leader>fn',
+        function()
+          Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+        end,
+        desc = '[F]ind [N]eovim Config',
+      },
+      {
+        '<leader>ff',
+        function()
+          Snacks.picker.smart()
+        end,
+        desc = '[F]ind Smart [F]ind Files',
+      },
+      {
+        '<leader>fl',
+        function()
+          Snacks.picker.files()
+        end,
+        desc = '[F]ind Find Fi[L]es',
+      },
+      {
+        '<leader>fo',
+        function()
+          Snacks.picker.recent { layout = 'dropdown' }
+        end,
+        desc = '[F]ind [O]ldfiles',
+      },
+      {
+        '<leader>fs',
+        function()
+          Snacks.picker.pickers()
+        end,
+        desc = '[F]ind [S]elect Picker',
+      },
+      {
+        '<leader>fw',
+        function()
+          Snacks.picker.grep_word()
+        end,
+        desc = '[F]ind Search [W]ord',
+      },
+      {
+        '<leader><leader>',
+        function()
+          Snacks.picker.buffers()
+        end,
+        desc = '[F]ind [B]uffers',
+      },
+      {
+        '<leader>fg',
+        function()
+          Snacks.picker.grep()
+        end,
+        desc = '[F]ind [G]rep',
+      },
+      {
+        '<leader>fx',
+        function()
+          Snacks.explorer()
+        end,
+        desc = '[F]ind E[x]plorer',
+      },
+      {
+        'gd',
+        function()
+          Snacks.picker.lsp_definitions()
+        end,
+        desc = '[G]oto [D]efinition',
+      },
+      {
+        'gr',
+        function()
+          Snacks.picker.lsp_references()
+        end,
+        nowait = true,
+        desc = '[G]oto [R]eferences',
       },
       {
         '<leader>bc',
@@ -94,40 +187,44 @@ return {
       --   desc = 'Rename File',
       -- },
       {
-        '<leader>gB',
+        '<leader>gw',
         function()
           Snacks.gitbrowse()
         end,
-        desc = 'Git Browse',
+        desc = '[G]it Open On [W]eb',
         mode = { 'n', 'v' },
       },
       {
-        '<leader>gb',
+        '<leader>gm',
         function()
           Snacks.git.blame_line()
         end,
-        desc = 'Git Blame Line',
+        desc = '[G]it Bla[M]e Line',
       },
       {
         '<leader>gf',
         function()
           Snacks.lazygit.log_file()
         end,
-        desc = 'Lazygit Current File History',
+        desc = '[G]it Current [F]ile History',
       },
       {
         '<leader>gl',
         function()
-          Snacks.lazygit()
+          Snacks.lazygit {
+            win = {
+              style = 'minimal',
+            },
+          }
         end,
-        desc = 'Lazygit',
+        desc = '[G]it [L]azygit',
       },
       {
         '<leader>gr',
         function()
           Snacks.lazygit.log()
         end,
-        desc = 'Lazygit Reflog (cwd)',
+        desc = '[G]it [R]eflog',
       },
       {
         '<c-/>',
