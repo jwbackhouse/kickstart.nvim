@@ -605,31 +605,53 @@ require('lazy').setup({
       -- do as well as how to actually do it!
 
       -- [[ Configure Telescope ]]
-      -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
         defaults = {
-          file_ignore_patterns = { 'node_modules' },
+          file_ignore_patterns = { 'node_modules', 'private/' },
           mappings = {
             i = { ['<c-enter>'] = 'to_fuzzy_refine' },
             n = { ['q'] = 'close' },
           },
           find_command = { 'fd', '--type', 'f', '--hidden', '--no-ignore' },
+          path_display = { 'truncate' },
+          theme = 'dropdown',
+          layout_config = {
+            center = {
+              width = 0.5,
+            },
+          },
         },
         pickers = {
           oldfiles = {
-            theme = 'ivy',
+            theme = 'dropdown',
+            path_display = { 'truncate = 3' },
+            layout_config = {
+              center = {
+                width = 0.6,
+              },
+            },
+          },
+          frecency = {
+            theme = 'dropdown',
+            layout_config = {
+              center = {
+                width = 0.6,
+              },
+            },
           },
           git_branches = {
-            theme = 'ivy',
+            theme = 'dropdown',
           },
           buffers = {
-            theme = 'ivy',
+            theme = 'dropdown',
           },
           find_files = {
-            theme = 'ivy',
+            theme = 'dropdown',
+            layout_config = {
+              center = {
+                width = 0.6,
+              },
+            },
             find_command = {
               'rg',
               '--files',
@@ -638,7 +660,13 @@ require('lazy').setup({
             },
           },
           lsp_references = {
-            theme = 'ivy',
+            theme = 'dropdown',
+            fname_width = 80,
+            layout_config = {
+              center = {
+                width = 0.6,
+              },
+            },
           },
           marks = {
             attach_mappings = function(bufnr, map)
@@ -877,7 +905,6 @@ require('lazy').setup({
 
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
-          --
           -- This may be unwanted, since they displace some of your code
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
