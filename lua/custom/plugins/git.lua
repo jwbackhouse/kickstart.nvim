@@ -17,21 +17,16 @@ return {
     },
   },
   {
-    'ldelossa/gh.nvim',
-    event = 'VeryLazy',
+    'pwntester/octo.nvim',
     dependencies = {
-      {
-        'ldelossa/litee.nvim',
-        config = function()
-          require('litee.lib').setup()
-        end,
-      },
+      'nvim-lua/plenary.nvim',
+      'folke/snacks.nvim',
+      'nvim-tree/nvim-web-devicons',
     },
     config = function()
-      require('litee.gh').setup()
+      require('octo').setup()
     end,
   },
-  { 'ldelossa/litee.nvim', event = 'VeryLazy' },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -68,8 +63,8 @@ return {
   vim.keymap.set('n', '<leader>gu', '<cmd>Gitsigns reset_hunk<cr>', { noremap = true, silent = true, desc = '[G]it [U]ndo hunk' }),
   vim.keymap.set('n', '<leader>gw', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Revie[W] hunk' }),
   -- PRs
-  vim.keymap.set('n', '<leader>gpo', '<cmd>GHOpenPR<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [O]pen' }),
-  vim.keymap.set('n', '<leader>gpr', '<cmd>GHStartReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [R]eview start' }),
-  vim.keymap.set('n', '<leader>gpf', '<cmd>GHSubmitReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),
-  vim.keymap.set('n', '<leader>gpc', '<cmd>GHCreateThread<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [C]omment' }),
+  -- vim.keymap.set('n', '<leader>gpo', '<cmd>GHOpenPR<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [O]pen' }),
+  -- vim.keymap.set('n', '<leader>gpr', '<cmd>GHStartReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [R]eview start' }),
+  -- vim.keymap.set('n', '<leader>gpf', '<cmd>GHSubmitReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),
+  -- vim.keymap.set('n', '<leader>gpc', '<cmd>GHCreateThread<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [C]omment' }),
 }
