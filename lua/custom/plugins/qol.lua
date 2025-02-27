@@ -26,7 +26,15 @@ return {
       input = { enabled = true },
       lazygit = {},
       picker = {
-        -- layout = 'dropdown',
+        matcher = {
+          frecency = true,
+          cwd_bonus = true,
+        },
+        formatters = {
+          file = {
+            truncate = 50,
+          },
+        },
       },
       explorer = {},
       notifier = {
@@ -130,7 +138,20 @@ return {
       {
         '<leader>fo',
         function()
-          Snacks.picker.recent { layout = 'dropdown' }
+          Snacks.picker.recent {
+            formatters = {
+              file = {
+                truncate = 100,
+              },
+            },
+            preview = 'none',
+            layout = {
+              preset = 'dropdown',
+              layout = {
+                width = 0.5,
+              },
+            },
+          }
         end,
         desc = '[F]ind [O]ldfiles',
       },
