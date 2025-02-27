@@ -23,13 +23,17 @@ vim.cmd [[autocmd FileType * set formatoptions-=ro]]
 vim.opt.signcolumn = 'number'
 
 -- Folding
--- vim.opt.foldlevel = 99 -- Start with all folds open
-vim.opt.foldnestmax = 4
-vim.opt.foldlevelstart = 3
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'typescriptreact',
+vim.opt.foldlevel = 99 -- Start with all folds open
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  pattern = { '*' },
   callback = function()
-    vim.opt.foldlevelstart = 5
+    local file_name = vim.fn.expand '%:t'
+    if file_name:match '%.test%.ts$' or file_name:match '%.test%.tsx$' then
+      vim.opt.foldlevel = 2
+      vim.opt.foldnestmax = 6
+    else
+      vim.opt.foldlevel = 99
+    end
   end,
 })
 vim.opt.foldmethod = 'expr'
