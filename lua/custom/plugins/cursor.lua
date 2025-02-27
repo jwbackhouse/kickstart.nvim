@@ -70,33 +70,33 @@ return {
       -- Add or skip cursor above/below the main cursor.
       set({ 'n', 'v' }, '<up>', function()
         mc.lineAddCursor(-1)
-      end)
+      end, { desc = 'Add cursor above' })
       set({ 'n', 'v' }, '<down>', function()
         mc.lineAddCursor(1)
-      end)
+      end, { desc = 'Add cursor below' })
       set({ 'n', 'v' }, '<leader><up>', function()
         mc.lineSkipCursor(-1)
-      end)
+      end, { desc = 'Skip cursor above' })
       set({ 'n', 'v' }, '<leader><down>', function()
         mc.lineSkipCursor(1)
-      end)
+      end, { desc = 'Skip cursor below' })
 
       -- Add or skip adding a new cursor by matching word/selection
-      set({ 'n', 'v' }, '<leader>n', function()
-        mc.matchAddCursor(1)
-      end)
-      set({ 'n', 'v' }, '<leader>s', function()
-        mc.matchSkipCursor(1)
-      end)
-      set({ 'n', 'v' }, '<leader>N', function()
+      set({ 'n', 'v' }, '<leader>mN', function()
         mc.matchAddCursor(-1)
-      end)
-      set({ 'n', 'v' }, '<leader>S', function()
+      end, { desc = '[M]ulticursor Add By Matching Above [N]' })
+      set({ 'n', 'v' }, '<leader>mn', function()
+        mc.matchAddCursor(1)
+      end, { desc = '[M]ulticursor Add By Matching Below [n]' })
+      set({ 'n', 'v' }, '<leader>mS', function()
         mc.matchSkipCursor(-1)
-      end)
+      end, { desc = '[M]ulticursor Skip By Matching Above [S]' })
+      set({ 'n', 'v' }, '<leader>ms', function()
+        mc.matchSkipCursor(1)
+      end, { desc = '[M]ulticursor Skip By Matching Below [s]' })
 
       -- Add all matches in the document
-      set({ 'n', 'v' }, '<leader>A', mc.matchAllAddCursors)
+      set({ 'n', 'v' }, '<leader>ma', mc.matchAllAddCursors, { desc = '[M]ulticursor Add [A]ll Matches' })
 
       -- You can also add cursors with any motion you prefer:
       -- set("n", "<right>", function()
@@ -133,21 +133,20 @@ return {
       end)
 
       -- bring back cursors if you accidentally clear them
-      set('n', '<leader>gv', mc.restoreCursors)
+      set('n', '<leader>mr', mc.restoreCursors, { desc = '[M]ulticursor [R]estore All' })
 
       -- Align cursor columns.
-      set('n', '<leader>a', mc.alignCursors)
+      set('n', '<leader>ml', mc.alignCursors, { desc = '[M]ulticursor [L]ineup' })
 
       -- Split visual selections by regex.
-      set('v', 'S', mc.splitCursors)
+      set('v', '<leader>ms', mc.splitCursors, { desc = '[M]ulticursor [S]plit by Regex' })
+
+      -- match new cursors within visual selections by regex.
+      set('v', '<leader>mm', mc.matchCursors, { desc = '[M]ulticursor [M]atch Multiple by Regex' })
 
       -- Append/insert for each line of visual selections.
       set('v', 'I', mc.insertVisual)
       set('v', 'A', mc.appendVisual)
-
-      -- match new cursors within visual selections by regex.
-      set('v', 'M', mc.matchCursors)
-
       -- Rotate visual selection contents.
       set('v', '<leader>t', function()
         mc.transposeCursors(1)

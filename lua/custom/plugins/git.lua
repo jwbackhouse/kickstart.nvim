@@ -61,10 +61,9 @@ return {
   vim.keymap.set('n', ']h', '<cmd>Gitsigns next_hunk<cr>', { noremap = true, silent = true, desc = '[G]it next hunk' }),
   vim.keymap.set('n', '[h', '<cmd>Gitsigns prev_hunk<cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
   vim.keymap.set('n', '<leader>gu', '<cmd>Gitsigns reset_hunk<cr>', { noremap = true, silent = true, desc = '[G]it [U]ndo hunk' }),
-  vim.keymap.set('n', '<leader>gw', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Revie[W] hunk' }),
+  vim.keymap.set('n', '<leader>gh', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Review [H]unk' }),
   -- PRs
-  -- vim.keymap.set('n', '<leader>gpo', '<cmd>GHOpenPR<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [O]pen' }),
-  -- vim.keymap.set('n', '<leader>gpr', '<cmd>GHStartReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [R]eview start' }),
-  -- vim.keymap.set('n', '<leader>gpf', '<cmd>GHSubmitReview<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),
-  -- vim.keymap.set('n', '<leader>gpc', '<cmd>GHCreateThread<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [C]omment' }),
+  vim.keymap.set('n', '<leader>gps', '<cmd>Octo review<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [S]tart review' }),
+  vim.keymap.set('n', '<leader>gpf', '<cmd>Octo review submit<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),
+  vim.keymap.set('n', '<leader>gpc', '<cmd>Octo comment<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [C]omment' }),
 }

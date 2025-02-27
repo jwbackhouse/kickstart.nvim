@@ -431,11 +431,6 @@ require('lazy').setup({
     end,
   },
   -- ,
-  -- Used by cmp_yanky
-  {
-    'gbprod/yanky.nvim',
-    opts = {},
-  },
   {
     'jedrzejboczar/possession.nvim',
     dependencies = {
@@ -1167,7 +1162,6 @@ require('lazy').setup({
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-nvim-lua',
       'hrsh7th/cmp-cmdline',
-      'chrisgrieser/cmp_yanky',
     },
     config = function()
       -- See `:help cmp`
@@ -1247,7 +1241,6 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
-          { name = 'cmp_yanky' },
         },
         formatting = {
           format = lspkind.cmp_format {
