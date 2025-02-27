@@ -59,6 +59,16 @@ return {
       },
       toggle = { enabled = true },
       words = { enabled = true },
+      zen = {
+        win = {
+          backdrop = {
+            transparent = false,
+          },
+        },
+        toggles = {
+          dim = false,
+        },
+      },
       styles = {
         notification = {
           -- wo = { wrap = true } -- Wrap notifications

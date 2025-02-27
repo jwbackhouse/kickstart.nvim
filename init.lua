@@ -130,7 +130,9 @@ vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, de
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
 -- Superceded by Snacks in plugins.qol
 -- Zen mode
-vim.keymap.set('n', '<leader>tz', ':ZenMode<CR>', { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
+vim.keymap.set('n', '<leader>tz', function()
+  Snacks.zen()
+end, { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
 -- Git
 vim.keymap.set('n', '<leader>gs', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [S]tatus' })
 -- Tabs
@@ -328,25 +330,6 @@ require('lazy').setup({
           Hint = { color = colors.hint },
           Misc = { color = colors.purple },
         },
-      }
-    end,
-  },
-  {
-    'folke/zen-mode.nvim',
-    enabled = true,
-    config = function()
-      -- local lualine = require 'lualine'
-      require('zen-mode').setup {
-        on_open = function(_)
-          -- lualine.hide {}
-          vim.g.cmdheight = 0
-          vim.o.laststatus = 0
-        end,
-        on_close = function()
-          -- lualine.hide { unhide = true }
-          vim.g.cmdheight = 1
-          vim.o.laststatus = 3
-        end,
       }
     end,
   },
