@@ -105,14 +105,6 @@ local default_options = { noremap = true, silent = true }
 -- vim.api.nvim_set_keymap('n', '<C-i>', '<C-u>', default_options)
 -- Map 'jj' to exit insert mode
 vim.keymap.set('i', 'jj', '<Esc>', default_options)
--- Map Command-i to run :CopilotChat
--- vim.keymap.set({ 'v', 'n' }, '<D-i>', ':CopilotChat<cr>', default_options)
--- copilot - replace tab for accepting suggestions
--- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
---   expr = true,
---   replace_keycodes = false,
--- })
--- vim.g.copilot_no_tab_map = true
 -- CmdS save
 vim.keymap.set('n', '<D-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save' })
 vim.keymap.set('i', '<D-s>', '<Esc>:w<CR>', { noremap = true, silent = true, desc = 'Save' })
@@ -242,25 +234,6 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- JB plugins
-  { 'github/copilot.vim', event = 'VeryLazy' },
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    branch = 'main',
-    dependencies = {
-      { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
-      { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log wrapper
-    },
-    build = 'make tiktoken', -- Only on MacOS or Linux
-    opts = {
-      model = 'claude-3.5-sonnet',
-      window = {
-        width = 0.35,
-      },
-      auto_insert_mode = true,
-    },
-    -- See Commands section for default commands if you want to lazy load on them
-  },
   -- File explorer
   {
     'mikavilpas/yazi.nvim',
