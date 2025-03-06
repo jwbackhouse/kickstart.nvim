@@ -1,34 +1,33 @@
 local function config_moody(colors, is_dark)
   local modecolors = {
-    -- normal = is_dark and colors.teal or colors.bg,
-    normal = colors.bg,
+    normal = is_dark and colors.cyan or colors.bg,
     insert = is_dark and colors.red or colors.diff.delete,
-    visual = is_dark and colors.purple or colors.diff.add,
+    visual = is_dark and colors.purple or '#e1d8ed',
     command = colors.blue,
-    operator = colors.orange,
+    operator = is_dark and colors.orange or '#debe9b',
     replace = colors.red,
     select = colors.purple,
     terminal = colors.cyan,
     terminal_n = colors.cyan,
   }
 
-  -- local modeblend = is_dark and 0.2 or 0.95
-  local modeblend = 0.2
+  local modeblend = is_dark and 0.2 or 0.95
+  local alt_modeblend = is_dark and 0.3 or 0.93
   require('moody').setup {
     -- larger number = closer to white, smaller number = closer to black
     blends = {
       normal = modeblend,
-      insert = modeblend,
-      visual = is_dark and 0.25 or 0.95,
+      insert = is_dark and 0.15 or 0.93,
+      visual = alt_modeblend,
       command = modeblend,
-      operator = modeblend,
+      operator = alt_modeblend,
       replace = modeblend,
       select = modeblend,
       terminal = modeblend,
       terminal_n = modeblend,
     },
     colors = modecolors,
-    disabled_filetypes = { 'TelescopePrompt', 'alpha' },
+    disabled_filetypes = { 'TelescopePrompt', 'alpha', 'snacks_picker_input' },
     disabled_buftypes = {},
     bold_nr = true,
     recording = {
@@ -38,9 +37,8 @@ local function config_moody(colors, is_dark)
       post_registry_text = ']',
       right_padding = 2,
     },
-    extend_to_linenr = false,
-    extend_to_linenr_visual = false,
-    reduce_cursorline = true,
+    extend_to_linenr = true,
+    extend_to_linenr_visual = true,
     fold_options = {
       enabled = false,
       start_color = '#C1C1C1',
@@ -51,12 +49,10 @@ end
 
 local function update_cursorline_colors(is_dark_mode)
   local colors = is_dark_mode and require 'tokyonight.colors.storm' or require('tokyonight.colors').setup { style = 'day' }
-
   config_moody(colors, is_dark_mode)
 end
 
 return {
-
   {
     'jake-stewart/multicursor.nvim',
     branch = '1.0',
@@ -171,7 +167,7 @@ return {
   },
   {
     'svampkorg/moody.nvim',
-    enabled = false,
+    enabled = true,
     event = { 'ModeChanged', 'BufWinEnter', 'WinEnter' },
     dependencies = {
       -- for seeing Moody's take on folds
@@ -181,6 +177,6 @@ return {
       local colors = require 'tokyonight.colors.storm'
       config_moody(colors, true)
     end,
-    update_cursorline_colors = update_cursorline_colors,
   },
+  update_cursorline_colors = update_cursorline_colors,
 }
