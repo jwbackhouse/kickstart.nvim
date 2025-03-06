@@ -337,8 +337,21 @@ return {
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplac [)] [']
       require('mini.surround').setup()
+      require('mini.operators').setup { replace = { prefix = 'gp' } }
       require('mini.diff').setup()
-      -- require('mini.pairs').setup()
+      require('mini.pairs').setup {
+        mappings = {
+          -- Disable pairing if character on either side is alphanumeric
+          ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ['['] = { action = 'closeopen', pair = '[]', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ['{'] = { action = 'closeopen', pair = '{}', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ['('] = { action = 'closeopen', pair = '()', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          ['<'] = { action = 'closeopen', pair = '<>', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+        },
+      }
+
       local animate = require 'mini.animate'
       animate.setup {
         scroll = { enable = true, timing = animate.gen_timing.linear { duration = 70, unit = 'total' } },
@@ -401,8 +414,15 @@ return {
   },
   {
     'altermo/ultimate-autopair.nvim',
+    enabled = false,
     event = { 'InsertEnter', 'CmdlineEnter' },
     branch = 'v0.6', --recommended as each new version will have breaking changes
-    opts = {},
+    opts = {
+      cr = {
+        enable = true,
+        autoclose = true,
+      },
+      close = { enable = true },
+    },
   },
 }
