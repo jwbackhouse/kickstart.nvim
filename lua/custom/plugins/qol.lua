@@ -156,6 +156,13 @@ return {
         desc = '[F]ind [O]ldfiles',
       },
       {
+        '<leader>fr',
+        function()
+          Snacks.picker.resume()
+        end,
+        desc = '[F]ind [R]esume',
+      },
+      {
         '<leader>fs',
         function()
           Snacks.picker.pickers()
@@ -191,6 +198,13 @@ return {
         desc = '[F]ind E[x]plorer',
       },
       {
+        '<leader>fh',
+        function()
+          Snacks.picker.help()
+        end,
+        desc = '[F]ind [H]elp',
+      },
+      {
         'gd',
         function()
           Snacks.picker.lsp_definitions()
@@ -212,13 +226,6 @@ return {
         end,
         desc = '[B]uffer [C]lose',
       },
-      -- {
-      --   '<leader>cR',
-      --   function()
-      --     Snacks.rename.rename_file()
-      --   end,
-      --   desc = 'Rename File',
-      -- },
       {
         '<leader>gw',
         function()
