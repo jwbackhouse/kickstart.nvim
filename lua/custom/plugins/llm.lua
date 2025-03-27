@@ -1,11 +1,12 @@
--- Map Command-i to run :CopilotChat
--- vim.keymap.set({ 'v', 'n' }, '<D-i>', ':CopilotChat<cr>', default_options)
--- copilot - replace tab for accepting suggestions
--- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
---   expr = true,
---   replace_keycodes = false,
--- })
+vim.keymap.set({ 'v', 'n' }, '<D-o>', ':CopilotChat<cr>', { noremap = true })
+vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  expr = true,
+  replace_keycodes = false,
+})
 -- vim.g.copilot_no_tab_map = true
+
+-- Needed for CopilotChat in Neovim <0.11
+vim.opt.completeopt = { 'menuone', 'popup', 'noinsert' }
 
 return {
   {
@@ -68,7 +69,7 @@ return {
     'CopilotC-Nvim/CopilotChat.nvim',
     branch = 'main',
     dependencies = {
-      { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
+      { 'zbirenbaum/copilot.lua' }, -- or zbirenbaum/copilot.lua
       { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log wrapper
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
