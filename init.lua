@@ -24,18 +24,19 @@ vim.opt.signcolumn = 'number'
 
 -- Folding
 vim.opt.foldlevel = 99 -- Start with all folds open
-vim.api.nvim_create_autocmd('BufWinEnter', {
-  pattern = { '*' },
-  callback = function()
-    local file_name = vim.fn.expand '%:t'
-    if file_name:match '%.test%.ts$' or file_name:match '%.test%.tsx$' then
-      vim.opt.foldlevel = 2
-      vim.opt.foldnestmax = 6
-    else
-      vim.opt.foldlevel = 99
-    end
-  end,
-})
+-- Open test files with folding enabled
+-- vim.api.nvim_create_autocmd('BufWinEnter', {
+--   pattern = { '*' },
+--   callback = function()
+--     local file_name = vim.fn.expand '%:t'
+--     if file_name:match '%.test%.ts$' or file_name:match '%.test%.tsx$' then
+--       vim.opt.foldlevel = 2
+--       vim.opt.foldnestmax = 6
+--     else
+--       vim.opt.foldlevel = 99
+--     end
+--   end,
+-- })
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldtext = ''
@@ -120,11 +121,6 @@ vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silen
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
--- Superceded by Snacks in plugins.qol
--- Zen mode
-vim.keymap.set('n', '<leader>tz', function()
-  Snacks.zen()
-end, { noremap = true, silent = true, desc = '[T]oggle [Z]en mode' })
 -- Git
 vim.keymap.set('n', '<leader>gs', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [S]tatus' })
 -- Tabs
@@ -248,8 +244,8 @@ require('lazy').setup({
     },
     ---@type YaziConfig
     opts = {
-      -- if you want to open yazi instead of netrw, see below for more info
-      open_for_directories = false,
+      open_for_directories = true,
+      floating_window_scaling_factor = 1,
       keymaps = {
         show_help = '<f1>',
       },

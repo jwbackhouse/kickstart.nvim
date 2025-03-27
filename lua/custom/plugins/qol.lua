@@ -12,6 +12,55 @@ vim.api.nvim_create_autocmd('VimResized', {
   command = 'wincmd =',
 })
 
+local function pick_cmd_result(picker_opts)
+  local git_root = Snacks.git.get_root()
+  vim.print(git_root)
+  local function finder(opts, ctx)
+    return require('snacks.picker.source.proc').proc({
+      opts,
+      {
+        cmd = picker_opts.cmd,
+        args = picker_opts.args,
+        transform = function(item)
+          item.cwd = picker_opts.cwd or git_root
+          item.file = item.text
+        end,
+      },
+    }, ctx)
+  end
+
+  Snacks.picker.pick {
+    source = picker_opts.name,
+    finder = finder,
+    preview = picker_opts.preview,
+    title = picker_opts.title,
+  }
+end
+
+-- Custom Pickers
+local custom_pickers = {}
+
+function custom_pickers.git_show()
+  pick_cmd_result {
+    cmd = 'git',
+    args = { 'diff-tree', '--no-commit-id', '--name-only', '--diff-filter=d', 'HEAD', '-r' },
+    name = 'git_show',
+    title = 'Git Last Commit',
+    preview = 'git_show',
+  }
+end
+
+function custom_pickers.git_diff_upstream()
+  pick_cmd_result {
+    cmd = 'git',
+    -- args = { 'diff-tree', '--no-commit-id', '--name-only', '--diff-filter=d', 'HEAD@{u}..HEAD', '-r' },
+    args = { 'diff-tree', '--no-commit-id', '--name-only', '--diff-filter=d', '--first-parent', 'origin/develop..HEAD', '-r' },
+    name = 'git_diff_upstream',
+    title = 'Git Branch Changed Files',
+    preview = 'file',
+  }
+end
+
 return {
   {
     'folke/snacks.nvim',
@@ -24,7 +73,16 @@ return {
       dashboard = { enabled = false },
       indent = { enabled = true },
       input = { enabled = true },
-      lazygit = {},
+      lazygit = {
+        config = {
+          os = {
+            edit = 'nvim --server "$NVIM" --remote {{filename}}',
+            editAtLine = 'nvim --server "$NVIM" --remote {{filename}}; [ -z "$NVIM" ] || nvim --server "$NVIM" --remote-send ":{{line}}<CR>"',
+            editAtLineAndWait = 'nvim +{{line}} {{filename}}',
+            editTemplate = "nvim --server '$NVIM' --remote {{filename}}",
+          },
+        },
+      },
       picker = {
         matcher = {
           frecency = true,
@@ -66,7 +124,6 @@ return {
         refresh = 50, -- refresh at most every 50ms
       },
       toggle = { enabled = true },
-      words = { enabled = true },
       zen = {
         win = {
           backdrop = {
@@ -204,6 +261,15 @@ return {
         end,
         desc = '[F]ind [H]elp',
       },
+      { '<leader>fi', custom_pickers.git_show, desc = '[F]ind G[I]t Show' },
+      { '<leader>fb', custom_pickers.git_diff_upstream, desc = 'Find in Git Branch' },
+      {
+        '<leader>fd',
+        function()
+          Snacks.picker.git_status()
+        end,
+        desc = 'Find in Git Diff',
+      },
       {
         'gd',
         function()
@@ -266,35 +332,28 @@ return {
         end,
         desc = '[G]it [R]eflog',
       },
+      -- {
+      --   ']w',
+      --   function()
+      --     Snacks.words.jump(vim.v.count1)
+      --   end,
+      --   desc = 'Next Reference',
+      --   mode = { 'n', 't' },
+      -- },
+      -- {
+      --   '[w',
+      --   function()
+      --     Snacks.words.jump(-vim.v.count1)
+      --   end,
+      --   desc = 'Prev Reference',
+      --   mode = { 'n', 't' },
+      -- },
       {
-        '<c-/>',
+        '<leader>tz',
         function()
-          Snacks.terminal()
+          Snacks.zen()
         end,
-        desc = 'Toggle Terminal',
-      },
-      {
-        '<c-_>',
-        function()
-          Snacks.terminal()
-        end,
-        desc = 'which_key_ignore',
-      },
-      {
-        ']w',
-        function()
-          Snacks.words.jump(vim.v.count1)
-        end,
-        desc = 'Next Reference',
-        mode = { 'n', 't' },
-      },
-      {
-        '[w',
-        function()
-          Snacks.words.jump(-vim.v.count1)
-        end,
-        desc = 'Prev Reference',
-        mode = { 'n', 't' },
+        desc = '[T]oggle [Z]en mode',
       },
     },
     init = function()
@@ -337,7 +396,11 @@ return {
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplac [)] [']
       require('mini.surround').setup()
-      require('mini.operators').setup { replace = { prefix = 'gp' } }
+      require('mini.operators').setup {
+        replace = {
+          prefix = 'gl',
+        },
+      }
       require('mini.diff').setup()
       require('mini.pairs').setup {
         mappings = {
@@ -423,6 +486,16 @@ return {
         autoclose = true,
       },
       close = { enable = true },
+    },
+  },
+  {
+    'm4xshen/hardtime.nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {
+      disabled_keys = {
+        ['<Down>'] = {},
+        ['<Up>'] = {},
+      },
     },
   },
 }
