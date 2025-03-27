@@ -382,24 +382,6 @@ require('lazy').setup({
       end, { desc = '[H]arpoon [5]' })
     end,
   },
-  -- ,
-  {
-    'jedrzejboczar/possession.nvim',
-    dependencies = {
-      { 'nvim-lua/plenary.nvim' },
-    },
-    config = function()
-      require('possession').setup {
-        plugins = {
-          delete_hidden_buffers = false,
-        },
-      }
-      vim.keymap.set('n', '<leader>ps', '<cmd>PossessionSave<CR>', { noremap = true, silent = true, desc = '[P]ossession [S]ave' })
-      vim.keymap.set('n', '<leader>pd', '<cmd>PossessionDelete<CR>', { noremap = true, silent = true, desc = '[P]ossession [D]elete' })
-      vim.keymap.set('n', '<leader>pc', '<cmd>PossessionClose<CR>', { noremap = true, silent = true, desc = '[P]ossession [C]lose' })
-      vim.keymap.set('n', '<leader>pl', '<cmd>Telescope possession list<CR>', { noremap = true, silent = true, desc = '[P]ossession [L]ist' })
-    end,
-  },
 
   -- Original
   -- {
