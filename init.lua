@@ -15,7 +15,7 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 -- JB options
--- vim.api.nvim_set_hl(0, 'CursorLine', { underline = true })
+vim.opt.cmdheight = 0
 -- Only show status bar on current window
 vim.opt.laststatus = 3
 -- Prevent comments continuing on new line
@@ -307,7 +307,7 @@ require('lazy').setup({
     'hedyhli/outline.nvim',
     lazy = true,
     cmd = { 'Outline', 'OutlineOpen' },
-    keys = { -- Example mapping to toggle outline
+    keys = {
       { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle outline' },
     },
     opts = {
@@ -509,6 +509,7 @@ require('lazy').setup({
 
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
+    enabled = false,
     event = 'VimEnter',
     branch = '0.1.x',
     keys = {
@@ -815,15 +816,15 @@ require('lazy').setup({
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          -- map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          -- map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          -- map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -885,12 +886,12 @@ require('lazy').setup({
             },
           },
         },
-        eslint = {
-          flags = {
-            allow_incremental_sync = false,
-            debounce_text_changes = 1000,
-          },
-        },
+        -- eslint = {
+        --   flags = {
+        --     allow_incremental_sync = false,
+        --     debounce_text_changes = 1000,
+        --   },
+        -- },
         sqlls = {
           cmd = { '/Users/jamesbackhouse/.nvm/versions/node/v18.16.0/bin/sql-language-server', 'up', '--method', 'stdio' },
         },
@@ -988,64 +989,17 @@ require('lazy').setup({
     dependencies = {
       'kristijanhusak/vim-dadbod-completion',
       'rafamadriz/friendly-snippets',
-      --      {
-      --        'L3MON4D3/LuaSnip',
-      --        version = 'v2.*',
-      -- }
-      -- build = 'make install_jsregexp',
-      --   dependencies = {
-      --     'rafamadriz/friendly-snippets',
-      --     config = function()
-      --       require('luasnip.loaders.from_vscode').lazy_load()
-      --       require('luasnip.loaders.from_vscode').lazy_load { paths = { vim.fn.stdpath 'config' .. '/snippets' } }
-      --
-      --       local extends = {
-      --         typescript = { 'tsdoc' },
-      --         javascript = { 'jsdoc' },
-      --         lua = { 'luadoc' },
-      --         sh = { 'shelldoc' },
-      --       }
-      --       -- friendly-snippets - enable standardized comments snippets
-      --       for ft, snips in pairs(extends) do
-      --         require('luasnip').filetype_extend(ft, snips)
-      --       end
-      --
-      --       local ls = require 'luasnip'
-      --       local types = require 'luasnip.util.types'
-      --
-      --       ls.config.set_config {
-      --         history = true,
-      --         -- Allows updating inside dynamic snippets
-      --         updateevents = 'TextChanged,TextChangedI',
-      --         ext_opts = {
-      --           [types.choiceNode] = {
-      --             active = {
-      --               virt_text = { { '<--', 'Error' } },
-      --             },
-      --           },
-      --         },
-      --       }
-      --
-      --       ls.snippets = {
-      --         all = {
-      --           ls.parser.parse_snippet('expand', 'this is what was expanded!'),
-      --         },
-      --         lua = {},
-      --       }
-      --     end,
-      --   },
-      --   opts = { history = true, delete_check_events = 'TextChanged' },
-      -- },
     },
-
     version = '*',
-
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
       -- 'default' for mappings similar to built-in completion
       -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
       -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+      enabled = function()
+        return not vim.tbl_contains({ 'copilot-chat', 'typr' }, vim.bo.filetype) and vim.bo.buftype ~= 'prompt' and vim.b.completion ~= false
+      end,
       keymap = { preset = 'default' },
       appearance = {
         use_nvim_cmp_as_default = true,
@@ -1058,14 +1012,18 @@ require('lazy').setup({
           draw = { treesitter = { 'lsp' } },
         },
       },
+      cmdline = {
+        completion = {
+          menu = {
+            auto_show = true,
+          },
+        },
+      },
       -- snippets = { preset = 'luasnip' },
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'lazydev', 'dadbod', 'codecompanion' },
-        per_filetype = {
-          typr = {},
-        },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'lazydev', 'dadbod' },
         providers = {
           lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
           path = { opts = { show_hidden_files_by_default = true } },
@@ -1278,8 +1236,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+    main = 'nvim-treesitter.configs',
     opts = {
       incremental_selection = {
         enable = true,
@@ -1331,19 +1288,19 @@ require('lazy').setup({
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
+      -- cmd = '⌘',
+      -- config = '🛠',
+      -- event = '📅',
+      -- ft = '📂',
+      -- init = '⚙',
+      -- keys = '🗝',
+      -- plugin = '🔌',
+      -- runtime = '💻',
+      -- require = '🌙',
+      -- source = '📄',
+      -- start = '🚀',
+      -- task = '📌',
+      -- lazy = '💤 ',
     },
   },
 })

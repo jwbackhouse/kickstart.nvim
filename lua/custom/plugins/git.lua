@@ -24,7 +24,9 @@ return {
       'nvim-tree/nvim-web-devicons',
     },
     config = function()
-      require('octo').setup()
+      require('octo').setup {
+        picker = 'snacks',
+      }
     end,
   },
 
@@ -58,8 +60,8 @@ return {
 
   -- Keybindings
   vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>', { noremap = true, silent = true, desc = '[G]it [D]iffview' }),
-  vim.keymap.set('n', ']h', '<cmd>Gitsigns next_hunk<cr>', { noremap = true, silent = true, desc = '[G]it next hunk' }),
-  vim.keymap.set('n', '[h', '<cmd>Gitsigns prev_hunk<cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
+  vim.keymap.set('n', ']h', '<cmd>Gitsigns next_hunk<cr><cr>', { noremap = true, silent = true, desc = '[G]it next hunk' }),
+  vim.keymap.set('n', '[h', '<cmd>Gitsigns prev_hunk<cr><cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
   vim.keymap.set('n', '<leader>gu', '<cmd>Gitsigns reset_hunk<cr>', { noremap = true, silent = true, desc = '[G]it [U]ndo hunk' }),
   vim.keymap.set('n', '<leader>gh', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Review [H]unk' }),
   -- PRs
