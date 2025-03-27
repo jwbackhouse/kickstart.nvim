@@ -975,10 +975,10 @@ require('lazy').setup({
       -- end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', stop_after_first = false },
+        typescriptreact = { 'prettierd', stop_after_first = false },
+        javascript = { 'prettierd', 'prettier', stop_after_first = false },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = false },
         sql = { 'sql_formatter' },
       },
     },
@@ -1352,13 +1352,15 @@ require('lazy').setup({
 -- vim: ts=2 sts=2 sw=2 et
 
 vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = { '*.tsx', '*.ts', '*.json' },
-  callback = function(args)
-    if vim.fn.exists 'EslintFixAll' then
-      vim.cmd 'EslintFixAll'
-    end
-    -- require('conform').format { bufnr = args.buf }
-  end,
+  pattern = { '*.tsx', '*.ts', '*.jsx', '*.js', '*.json' },
+  group = vim.api.nvim_create_augroup('EslintFixAll', { clear = true }),
+  command = 'silent! EslintFixAll',
+  -- callback = function(args)
+  --   if vim.fn.exists 'EslintFixAll' then
+  --     vim.cmd 'EslintFixAll'
+  --   end
+  -- require('conform').format { bufnr = args.buf }
+  -- end,
 })
 
 -- Phil's OSO LSP (not available on Mason)
