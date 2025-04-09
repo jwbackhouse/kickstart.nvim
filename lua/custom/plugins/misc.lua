@@ -5,4 +5,15 @@ return {
     opts = {},
     cmd = { 'Typr', 'TyprStats' },
   },
+  {
+    'm4xshen/hardtime.nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {
+      disabled_filetypes = { 'Outline' },
+      disabled_keys = {
+        ['<Down>'] = {},
+        ['<Up>'] = {},
+      },
+    },
+  },
 }

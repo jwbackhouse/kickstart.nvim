@@ -30,20 +30,8 @@ local function config_moody(colors, is_dark)
     disabled_filetypes = { 'TelescopePrompt', 'alpha', 'snacks_picker_input' },
     disabled_buftypes = {},
     bold_nr = true,
-    recording = {
-      enabled = false,
-      icon = '󰑋',
-      pre_registry_text = '[',
-      post_registry_text = ']',
-      right_padding = 2,
-    },
     extend_to_linenr = true,
     extend_to_linenr_visual = true,
-    fold_options = {
-      enabled = false,
-      start_color = '#C1C1C1',
-      end_color = '#2F2F2F',
-    },
   }
 end
 
@@ -169,10 +157,6 @@ return {
     'svampkorg/moody.nvim',
     enabled = true,
     event = { 'ModeChanged', 'BufWinEnter', 'WinEnter' },
-    dependencies = {
-      -- for seeing Moody's take on folds
-      'kevinhwang91/nvim-ufo',
-    },
     config = function()
       local colors = require 'tokyonight.colors.storm'
       config_moody(colors, true)

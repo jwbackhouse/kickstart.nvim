@@ -488,14 +488,4 @@ return {
       close = { enable = true },
     },
   },
-  {
-    'm4xshen/hardtime.nvim',
-    dependencies = { 'MunifTanjim/nui.nvim' },
-    opts = {
-      disabled_keys = {
-        ['<Down>'] = {},
-        ['<Up>'] = {},
-      },
-    },
-  },
 }

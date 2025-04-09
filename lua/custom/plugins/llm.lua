@@ -54,6 +54,7 @@ return {
   {
     'zbirenbaum/copilot.lua',
     event = 'VeryLazy',
+    enabled = true,
     config = true,
     opts = {
       suggestion = {

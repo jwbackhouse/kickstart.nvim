@@ -84,21 +84,6 @@ vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-
--- Preview substitutions live, as you type!
-vim.opt.inccommand = 'split'
-
--- Show which line your cursor is on
-vim.opt.cursorline = true
-
--- Minimal number of screen lines to keep above and below the cursor.
--- vim.opt.scrolloff = 0
-
 -- [[ Basic Keymaps ]]
 -- JB keymaps
 local default_options = { noremap = true, silent = true }
@@ -121,8 +106,6 @@ vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silen
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
--- Git
-vim.keymap.set('n', '<leader>gs', ':Neogit<CR>', { noremap = true, silent = true, desc = '[G]it [S]tatus' })
 -- Tabs
 vim.keymap.set('n', '<leader>an', ':tabnew<CR>', { noremap = true, silent = true, desc = 'T[A]b [N]ew' })
 vim.keymap.set('n', '<leader>ac', ':tabclose<CR>', { noremap = true, silent = true, desc = 'T[A]b [C]lose' })
