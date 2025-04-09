@@ -12,6 +12,7 @@ return {
     event = 'VeryLazy',
     ---@type Flash.Config
     opts = {
+      labels = 'qwzx1234567890',
       jump = {
         nohlsearch = true,
       },
@@ -19,7 +20,7 @@ return {
         search = {
           enabled = true,
           highlight = {
-            backdrop = true,
+            backdrop = false,
           },
         },
         char = {

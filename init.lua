@@ -95,7 +95,22 @@ vim.keymap.set('i', 'jj', '<Esc>', default_options)
 vim.keymap.set('n', '<D-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save' })
 vim.keymap.set('i', '<D-s>', '<Esc>:w<CR>', { noremap = true, silent = true, desc = 'Save' })
 -- Diagnostics
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, default_options)
+vim.keymap.set('n', '<leader>e', function()
+  vim.diagnostic.open_float()
+  -- TODO: temporarily toggle tiny-inline-diagnostics
+end, default_options)
+-- Opens virtual lines but no line wrapping
+-- vim.keymap.set('n', '<leader>e', function()
+--   vim.diagnostic.config { virtual_lines = { current_line = true }, virtual_text = false }
+--   vim.api.nvim_create_autocmd('CursorMoved', {
+--     group = vim.api.nvim_create_augroup('line-diagnostics', { clear = true }),
+--     callback = function()
+--       vim.diagnostic.config { virtual_lines = false, virtual_text = true }
+--       return true
+--     end,
+--   })
+-- end)
+
 -- Remove unused imports
 vim.keymap.set('n', "<D-S-'>", ':VtsExec remove_unused_imports<CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
 -- Cycle through buffers

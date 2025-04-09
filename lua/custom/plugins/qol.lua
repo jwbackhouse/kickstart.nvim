@@ -71,7 +71,7 @@ return {
     opts = {
       bigfile = { enabled = false },
       dashboard = { enabled = false },
-      indent = { enabled = true },
+      indent = { enabled = false },
       input = { enabled = true },
       lazygit = {
         config = {
@@ -94,7 +94,7 @@ return {
           },
         },
       },
-      explorer = {},
+      explorer = { enabled = false },
       notifier = {
         enabled = true,
         timeout = 3000,
@@ -109,7 +109,7 @@ return {
         },
       },
       statuscolumn = {
-        enabled = true,
+        enabled = false,
         left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
         right = { 'fold', 'git' }, -- priority of signs on the right (high to low)
         folds = {
@@ -118,7 +118,7 @@ return {
         },
         git = {
           -- patterns to match Git signs
-          enabled = true,
+          enabled = false,
           patterns = { 'GitSign', 'MiniDiffSign' },
         },
         refresh = 50, -- refresh at most every 50ms
@@ -167,6 +167,7 @@ return {
         function()
           Snacks.picker.git_branches {
             layout = 'vscode',
+            all = true,
           }
         end,
         desc = '[G]it [B]ranches',
@@ -468,7 +469,12 @@ return {
     config = function()
       require('tiny-inline-diagnostic').setup {
         options = {
+          show_source = true,
           multilines = true,
+          break_line = {
+            enabled = true,
+            after = 60,
+          },
         },
         disabled_ft = {},
       }

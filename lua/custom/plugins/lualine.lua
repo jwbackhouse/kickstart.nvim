@@ -41,16 +41,26 @@ local function config_lualine(colors)
     color = { bg = colors.bg, fg = colors.blue },
   }
 
-  local filename = {
+  local filelocation = {
     'filename',
     path = 1,
     file_status = true,
     fmt = function(str)
-      local stringLength = string.len(str)
-      local max = 60
-      return (stringLength > max and '...' or '') .. str:sub(stringLength - max, stringLength)
+      local _, secondForwardSlash = string.find(str, '.-/.-/')
+      if not secondForwardSlash then
+        return str
+      end
+      return string.sub(str, 1, secondForwardSlash) .. '.../'
     end,
+    separator = nil,
+    padding = { right = 0 },
+  }
+
+  local filename = {
+    'filename',
+    path = 0,
     separator = { right = '' },
+    padding = { left = 0 },
   }
 
   local inactive_winbar_filename = {
@@ -202,6 +212,7 @@ local function config_lualine(colors)
       },
       lualine_b = {
         filetype,
+        filelocation,
         filename,
         diff,
       },
