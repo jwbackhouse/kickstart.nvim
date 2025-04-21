@@ -29,6 +29,17 @@ return {
                 },
               },
             },
+            tools = {
+              ['mcp'] = {
+                callback = function()
+                  return require 'mcphub.extensions.codecompanion'
+                end,
+                opts = {
+                  requires_approval = false,
+                  temperature = 0.7,
+                },
+              },
+            },
           },
           inline = {
             adapter = 'copilot',
@@ -42,6 +53,9 @@ return {
           },
           diff = {
             provider = 'mini_diff',
+          },
+          action_palette = {
+            provider = 'default',
           },
         },
       }
