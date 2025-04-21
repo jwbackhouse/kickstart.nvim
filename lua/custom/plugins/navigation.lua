@@ -2,7 +2,7 @@ return {
   {
     'aaronik/treewalker.nvim',
     opts = {
-      highlight = true,
+      highlight = false,
       highlight_duration = 250,
       highlight_group = 'ColorColumn',
     },
@@ -38,10 +38,10 @@ return {
   },
   },
 
-  vim.keymap.set({ 'n', 'v' }, '<D-j>', '<cmd>Treewalker Down<CR>', { noremap = true }),
-  vim.keymap.set({ 'n', 'v' }, '<D-k>', '<cmd>Treewalker Up<CR>', { noremap = true }),
-  vim.keymap.set({ 'n', 'v' }, '<D-g>', '<cmd>Treewalker Left<CR>', { noremap = true }),
-  vim.keymap.set({ 'n', 'v' }, '<D-l>', '<cmd>Treewalker Right<CR>', { noremap = true }),
+  vim.keymap.set({ 'n', 'v' }, '<D-j>', '<cmd>Treewalker Down<CR>zz', { noremap = true }),
+  vim.keymap.set({ 'n', 'v' }, '<D-k>', '<cmd>Treewalker Up<CR>zz', { noremap = true }),
+  vim.keymap.set({ 'n', 'v' }, '<D-g>', '<cmd>Treewalker Left<CR>zz', { noremap = true }),
+  vim.keymap.set({ 'n', 'v' }, '<D-l>', '<cmd>Treewalker Right<CR>zz', { noremap = true }),
   vim.keymap.set('n', '<D-S-j>', '<cmd>Treewalker SwapDown<CR>', { noremap = true }),
   vim.keymap.set('n', '<D-S-k>', '<cmd>Treewalker SwapUp<CR>', { noremap = true }),
 }

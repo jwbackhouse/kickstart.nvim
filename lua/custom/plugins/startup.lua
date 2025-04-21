@@ -96,32 +96,12 @@ return {
           '󰄉 ' .. ' Recent files',
           ":lua Snacks.picker.recent({layout = { preset = 'dropdown', layout = { width = 0.5 } }, formatters = { file = {truncate = 100 }}}) <CR>"
         ),
-        dashboard.button('f', ' ' .. ' Find files', ':lua Snacks.picker.smart() <CR>'),
+        dashboard.button('f', ' ' .. ' Find files', ':lua Snacks.picker.smart({}) <CR>'),
         dashboard.button('g', ' ' .. ' Find text', ':lua Snacks.picker.grep() <CR>'),
         dashboard.button('b', ' ' .. ' Git branches', ':lua Snacks.picker.git_branches({layout = "vscode"}) <CR>'),
         dashboard.button('c', ' ' .. ' Config', ':e ~/.config/nvim/init.lua<CR>'),
         dashboard.button('t', ' ' .. ' Typing', ':Typr <CR>'),
         dashboard.button('q', ' ' .. ' Quit', ':qa<CR>'),
-        (function()
-          local group = { type = 'group', opts = { spacing = 0 } }
-          group.val = {
-            {
-              type = 'text',
-              val = 'Sessions',
-              opts = {
-                position = 'center',
-              },
-            },
-          }
-          local path = vim.fn.stdpath 'data' .. '/possession'
-          local files = vim.split(vim.fn.glob(path .. '/*.json'), '\n')
-          for i, file in pairs(files) do
-            local basename = vim.fs.basename(file):gsub('%.json', '')
-            local button = dashboard.button(tostring(i), ' ' .. basename, '<cmd>PossessionLoad ' .. basename .. '<cr>')
-            table.insert(group.val, button)
-          end
-          return group
-        end)(),
       }
       dashboard.opts.layout[1].val = 8
     end,

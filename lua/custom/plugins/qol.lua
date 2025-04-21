@@ -90,7 +90,7 @@ return {
         },
         formatters = {
           file = {
-            truncate = 50,
+            truncate = 90,
           },
         },
       },
@@ -182,7 +182,27 @@ return {
       {
         '<leader>ff',
         function()
-          Snacks.picker.smart()
+          -- This copies the default config in order to change a few widths
+          -- There should be a better way...
+          Snacks.picker.smart {
+            layout = {
+              preset = 'default',
+              layout = {
+                box = 'horizontal',
+                width = 0.9,
+                min_width = 120,
+                height = 0.8,
+                {
+                  box = 'vertical',
+                  border = 'rounded',
+                  title = '{title} {live} {flags}',
+                  { win = 'input', height = 1, border = 'bottom' },
+                  { win = 'list', border = 'none' },
+                },
+                { win = 'preview', title = '{preview}', border = 'rounded', width = 0.4 },
+              },
+            },
+          }
         end,
         desc = '[F]ind Smart [F]ind Files',
       },
@@ -409,10 +429,13 @@ return {
           ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
           ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
           ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+
+          ['<'] = { action = 'closeopen', pair = '<>', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          -- needed to prevent duplicate closing tag
+          ['>'] = { action = 'close', pair = '<>', neigh_pattern = '[^%w]', register = { cr = true } },
           ['['] = { action = 'closeopen', pair = '[]', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
           ['{'] = { action = 'closeopen', pair = '{}', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
           ['('] = { action = 'closeopen', pair = '()', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          ['<'] = { action = 'closeopen', pair = '<>', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
         },
       }
 
