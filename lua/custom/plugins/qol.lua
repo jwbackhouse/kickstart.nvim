@@ -435,17 +435,52 @@ return {
       require('mini.diff').setup()
       require('mini.pairs').setup {
         mappings = {
-          -- Disable pairing if character on either side is alphanumeric
-          ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          -- after https://gist.github.com/tmerse/dc21ec932860013e56882f23ee9ad8d2
+          [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
+          ['('] = {
+            action = 'open',
+            pair = '()',
+            neigh_pattern = '.[%s%z%)]',
+            register = { cr = false },
+          },
 
-          ['<'] = { action = 'closeopen', pair = '<>', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          -- needed to prevent duplicate closing tag
-          ['>'] = { action = 'close', pair = '<>', neigh_pattern = '[^%w]', register = { cr = true } },
-          ['['] = { action = 'closeopen', pair = '[]', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          ['{'] = { action = 'closeopen', pair = '{}', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
-          ['('] = { action = 'closeopen', pair = '()', neigh_pattern = '[^%w\\][^%w]', register = { cr = true } },
+          [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
+          ['['] = {
+            action = 'open',
+            pair = '[]',
+            neigh_pattern = '.[%s%z%)}%]]',
+            register = { cr = false },
+          },
+
+          ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
+          ['{'] = {
+            action = 'open',
+            pair = '{}',
+            neigh_pattern = '.[%s%z%)}%]]',
+            register = { cr = false },
+          },
+
+          -- Double quote: Prevent pairing if either side is a letter
+          ['"'] = {
+            action = 'closeopen',
+            pair = '""',
+            neigh_pattern = '[^%w\\][^%w]',
+            register = { cr = false },
+          },
+          -- Single quote: Prevent pairing if either side is a letter
+          ["'"] = {
+            action = 'closeopen',
+            pair = "''",
+            neigh_pattern = '[^%w\\][^%w]',
+            register = { cr = false },
+          },
+          -- Backtick: Prevent pairing if either side is a letter
+          ['`'] = {
+            action = 'closeopen',
+            pair = '``',
+            neigh_pattern = '[^%w\\][^%w]',
+            register = { cr = false },
+          },
         },
       }
 
