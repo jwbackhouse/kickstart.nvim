@@ -118,6 +118,7 @@ vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true, desc
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'Previous buffer' })
 -- Lspsaga
 vim.keymap.set('n', '<leader>rn', ':Lspsaga rename<CR>', { noremap = true, silent = true, desc = '[R]e[n]ame' })
+vim.keymap.set('n', 'gD', ':Lspsaga goto_type_definition<CR>', { noremap = true, silent = true, desc = '[G]oto Type [D]efinition' })
 -- Buffers
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>ba', ':bufdo bd<CR>', { noremap = true, silent = true, desc = '[B]uffer close [A]ll' })
@@ -816,7 +817,7 @@ require('lazy').setup({
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          -- map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- Prevent highlighting word under cursor
           vim.lsp.handlers['textDocument/documentHighlight'] = function() end
@@ -862,6 +863,9 @@ require('lazy').setup({
                 nodePath = '~/.config/nvim/run-electron-as-node',
                 -- nodePath = '/Applications/Electron.app/Contents/MacOs/Electron',
                 maxTsServerMemory = 8192,
+              },
+              preferences = {
+                importModuleSpecifier = 'relative',
               },
             },
           },
