@@ -11,13 +11,13 @@ local function config_moody(colors, is_dark)
     terminal_n = colors.cyan,
   }
 
-  local modeblend = is_dark and 0.2 or 0.95
-  local alt_modeblend = is_dark and 0.3 or 0.93
+  local modeblend = is_dark and 0.2 or 0.9
+  local alt_modeblend = is_dark and 0.3 or 0.9
   require('moody').setup {
     -- larger number = closer to white, smaller number = closer to black
     blends = {
-      normal = modeblend,
-      insert = is_dark and 0.15 or 0.93,
+      normal = is_dark and 0.2 or 0.6,
+      insert = is_dark and 0.15 or 0.9,
       visual = alt_modeblend,
       command = modeblend,
       operator = alt_modeblend,
@@ -31,7 +31,7 @@ local function config_moody(colors, is_dark)
     disabled_buftypes = {},
     bold_nr = true,
     extend_to_linenr = true,
-    extend_to_linenr_visual = true,
+    extend_to_linenr_visual = false,
   }
 end
 

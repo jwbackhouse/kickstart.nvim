@@ -1,7 +1,9 @@
-vim.keymap.set('n', 'G', 'Gzz', { noremap = true, silent = true })
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('x', '<leader>v', [["_dP]])
+-- vim.keymap.set('n', '/', function()
+--   return ':normal! /\\v' .. vim.fn.input 'Search: ' .. '<CR>zz'
+-- end, { expr = true })
 -- Don't write to register when hitting 'x'
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
 -- Select all :)
@@ -91,6 +93,14 @@ return {
         formatters = {
           file = {
             truncate = 90,
+          },
+        },
+        sources = {
+          files = {
+            hidden = true,
+          },
+          grep = {
+            hidden = true,
           },
         },
       },
@@ -470,6 +480,23 @@ return {
       vim.api.nvim_create_autocmd('User', {
         pattern = 'VeryLazy',
         callback = function()
+          local function center_after_move(keys)
+            return function()
+              local count = vim.v.count
+              if count == 0 then
+                vim.cmd('normal! ' .. keys)
+              else
+                vim.cmd('normal! ' .. count .. keys)
+              end
+              require('go-up').centerScreen()
+            end
+          end
+
+          -- Center after moving to the top or bottom
+          vim.keymap.set('n', 'gg', center_after_move 'gg', { noremap = true, silent = true })
+          vim.keymap.set('n', 'G', center_after_move 'G', { noremap = true, silent = true })
+
+          -- Keep your existing scroll mappings
           vim.keymap.set('n', '<C-d>', [[<Cmd>lua vim.cmd('normal! <C-d>'); MiniAnimate.execute_after('scroll', require('go-up').centerScreen)<CR>]])
           vim.keymap.set('n', '<C-u>', [[<Cmd>lua vim.cmd('normal! <C-u>'); MiniAnimate.execute_after('scroll', require('go-up').centerScreen)<CR>]])
         end,

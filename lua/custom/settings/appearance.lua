@@ -5,7 +5,7 @@ vim.opt.signcolumn = 'yes'
 
 -- CURSORLINE
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 -- Only highlight the line number of the cursor line
 vim.opt.cursorlineopt = 'number'
 
