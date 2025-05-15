@@ -946,32 +946,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'folke/tokyonight.nvim',
-    enabled = true,
-    lazy = true,
-    -- priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      vim.o.termguicolors = true
-      vim.cmd.colorscheme 'tokyonight-storm'
-    end,
-  },
-  -- JB themes
-  {
-    'dgox16/oldworld.nvim',
-    name = 'oldworld',
-    lazy = true,
-  },
-  {
-    'rmehri01/onenord.nvim',
-    name = 'onenord',
-    lazy = true,
-    -- init = function()
-    --   vim.o.termguicolors = true
-    --   vim.cmd.colorscheme 'onenord'
-    -- end,
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Highlight, edit, and navigate code

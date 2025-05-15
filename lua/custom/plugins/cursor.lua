@@ -16,7 +16,7 @@ local function config_moody(colors, is_dark)
   require('moody').setup {
     -- larger number = closer to white, smaller number = closer to black
     blends = {
-      normal = is_dark and 0.2 or 0.6,
+      normal = is_dark and 0.2 or 0.8,
       insert = is_dark and 0.15 or 0.9,
       visual = alt_modeblend,
       command = modeblend,
