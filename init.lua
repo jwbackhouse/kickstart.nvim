@@ -1026,7 +1026,7 @@ require('lazy').setup({
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js', '*.json' },
   group = vim.api.nvim_create_augroup('EslintFixAll', { clear = true }),
-  command = 'silent! EslintFixAll',
+  command = 'silent! LspEslintFixAll',
   -- callback = function(args)
   --   if vim.fn.exists 'EslintFixAll' then
   --     vim.cmd 'EslintFixAll'
