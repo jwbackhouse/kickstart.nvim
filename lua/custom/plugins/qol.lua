@@ -8,6 +8,8 @@ vim.keymap.set('x', '<leader>v', [["_dP]])
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
 -- Select all :)
 vim.keymap.set('n', '<D-a>', 'ggVG', { noremap = true, silent = true })
+-- Clear contents of line
+vim.keymap.set('n', '<leader>dd', '0"_d$', { noremap = true, silent = true })
 
 -- Auto resize splits when the terminal's window is resized
 vim.api.nvim_create_autocmd('VimResized', {
