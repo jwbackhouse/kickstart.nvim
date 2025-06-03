@@ -11,14 +11,16 @@ return {
   {
     'chrisgrieser/nvim-various-textobjs',
     event = 'VeryLazy',
-    opts = {
-      keymaps = {
-        useDefaults = true,
-      },
-    },
+    enabled = true,
     config = function()
-      -- Delete surrounding indentation
-      -- See plugin README
+      local vto = require 'various-textobjs'
+      vto.setup {
+        keymaps = {
+          useDefaults = true,
+        },
+      }
+
+      -- Delete surrounding indentation: see plugin README
       vim.keymap.set('n', 'dsi', function()
         -- select outer indentation
         require('various-textobjs').indentation('outer', 'outer')
