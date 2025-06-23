@@ -30,9 +30,10 @@ return {
     config = function()
       local cc = require 'codecompanion'
       cc.setup {
+        log_level = 'DEBUG',
         strategies = {
           chat = {
-            adapter = 'copilot',
+            adapter = { name = 'copilot', model = 'claude-sonnet-4' },
             slash_commands = {
               ['file'] = {
                 opts = {
@@ -41,6 +42,14 @@ return {
               },
             },
             tools = {
+              ['next_edit_suggestion'] = {
+                opts = {
+                  --- the default is to open in a new tab, and reuse existing tabs
+                  --- where possible
+                  ---@type string|fun(path: string):integer?
+                  jump_action = 'tabnew',
+                },
+              },
               ['mcp'] = {
                 callback = function()
                   return require 'mcphub.extensions.codecompanion'
@@ -100,7 +109,7 @@ return {
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-      model = 'claude-3.5-sonnet',
+      model = 'claude-sonnet-4',
       window = {
         width = 0.35,
       },
