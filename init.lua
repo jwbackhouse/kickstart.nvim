@@ -112,7 +112,7 @@ end, default_options)
 -- end)
 
 -- Remove unused imports
-vim.keymap.set('n', "<D-S-'>", ':TSToolsRemoveUnusedImports <CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
+vim.keymap.set('n', "<D-S-'>", ':VtsExec remove_unused_imports<CR>', { noremap = true, silent = true, desc = 'Remove unused imports' })
 -- Cycle through buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true, desc = 'Next buffer' })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true, desc = 'Previous buffer' })
@@ -275,6 +275,28 @@ require('lazy').setup({
         },
         rename = {
           in_select = false,
+        },
+      }
+    end,
+  },
+  -- Scrollbar
+  {
+    'petertriho/nvim-scrollbar',
+    event = 'VeryLazy',
+    enabled = false,
+    config = function()
+      local colors = require('tokyonight.colors').setup()
+      require('scrollbar').setup {
+        handle = {
+          color = colors.bg_highlight,
+        },
+        marks = {
+          Search = { color = colors.orange },
+          Error = { color = colors.error },
+          Warn = { color = colors.warning },
+          Info = { color = colors.info },
+          Hint = { color = colors.hint },
+          Misc = { color = colors.purple },
         },
       }
     end,
@@ -443,7 +465,6 @@ require('lazy').setup({
   { 'Bilal2453/luvit-meta', lazy = true },
   {
     'yioneko/nvim-vtsls',
-    enabled = false,
   },
   {
     -- Main LSP Configuration
@@ -465,9 +486,9 @@ require('lazy').setup({
     config = function()
       local capabilities = require('blink.cmp').get_lsp_capabilities()
       require('lspconfig').lua_ls.setup { capabilities = capabilities }
-      -- require('lspconfig').vtsls.setup {
-      --   capabilities = capabilities,
-      -- }
+      require('lspconfig').vtsls.setup {
+        capabilities = capabilities,
+      }
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -587,25 +608,25 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- ts_ls = {},
-        -- vtsls = {
-        --   settings = {
-        --     vstls = { experimental = {
-        --       completion = {
-        --         enableServerSideFuzzyMatch = true,
-        --       },
-        --     } },
-        --     typescript = {
-        --       tsserver = {
-        --         nodePath = '~/.config/nvim/run-electron-as-node',
-        --         -- nodePath = '/Applications/Electron.app/Contents/MacOs/Electron',
-        --         maxTsServerMemory = 8192,
-        --       },
-        --       preferences = {
-        --         importModuleSpecifier = 'relative',
-        --       },
-        --     },
-        --   },
-        -- },
+        vtsls = {
+          settings = {
+            vstls = { experimental = {
+              completion = {
+                enableServerSideFuzzyMatch = true,
+              },
+            } },
+            typescript = {
+              tsserver = {
+                nodePath = '~/.config/nvim/run-electron-as-node',
+                -- nodePath = '/Applications/Electron.app/Contents/MacOs/Electron',
+                maxTsServerMemory = 8192,
+              },
+              preferences = {
+                importModuleSpecifier = 'relative',
+              },
+            },
+          },
+        },
         -- eslint = {
         --   flags = {
         --     allow_incremental_sync = false,
@@ -641,7 +662,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        -- 'vtsls',
+        'vtsls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -663,11 +684,9 @@ require('lazy').setup({
 
   {
     'pmizio/typescript-tools.nvim',
-    enabled = true,
+    enabled = false,
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
-    opts = {
-      code_lens = 'all',
-    },
+    opts = {},
     event = 'VimEnter',
   },
 
@@ -942,7 +961,7 @@ require('lazy').setup({
           node_decremental = '<S-BS>',
         },
       },
-      ensure_installed = { 'bash', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'typescript', 'tsx', 'javascript' },
+      ensure_installed = { 'bash', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       auto_install = false,
       highlight = {
         enable = true,
