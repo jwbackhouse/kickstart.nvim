@@ -12,6 +12,7 @@ return {
             default_section = 'breakpoints',
           },
           windows = {
+            position = 'right',
             terminal = {
               hide = { 'pwa-node' },
             },

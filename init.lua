@@ -619,7 +619,7 @@ require('lazy').setup({
               tsserver = {
                 nodePath = '~/.config/nvim/run-electron-as-node',
                 -- nodePath = '/Applications/Electron.app/Contents/MacOs/Electron',
-                maxTsServerMemory = 8192,
+                maxTsServerMemory = 12288,
               },
               preferences = {
                 importModuleSpecifier = 'relative',
