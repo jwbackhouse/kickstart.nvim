@@ -88,6 +88,7 @@ return {
         },
       },
       picker = {
+        ui_select = true,
         matcher = {
           frecency = true,
           cwd_bonus = true,

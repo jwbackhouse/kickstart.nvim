@@ -2,6 +2,9 @@ return {
   {
     'chrisgrieser/nvim-spider',
     lazy = true,
+    opts = {
+      skipInsignificantPunctuation = false,
+    },
     keys = {
       { 'w', "<cmd>lua require('spider').motion('w')<CR>", mode = { 'n', 'o', 'x' } },
       { 'e', "<cmd>lua require('spider').motion('e')<CR>", mode = { 'n', 'o', 'x' } },
@@ -11,16 +14,14 @@ return {
   {
     'chrisgrieser/nvim-various-textobjs',
     event = 'VeryLazy',
-    enabled = true,
+    opts = {
+      keymaps = {
+        useDefaults = true,
+      },
+    },
     config = function()
-      local vto = require 'various-textobjs'
-      vto.setup {
-        keymaps = {
-          useDefaults = true,
-        },
-      }
-
-      -- Delete surrounding indentation: see plugin README
+      -- Delete surrounding indentation
+      -- See plugin README
       vim.keymap.set('n', 'dsi', function()
         -- select outer indentation
         require('various-textobjs').indentation('outer', 'outer')
@@ -61,34 +62,40 @@ return {
   {
     'folke/flash.nvim',
     event = 'VeryLazy',
-    ---@type Flash.Config
-    opts = {
-      labels = 'wzqvk1234567890[]()',
-      jump = {
-        nohlsearch = true,
-      },
-      modes = {
-        search = {
-          enabled = false,
-          highlight = {
-            backdrop = false,
+    config = function()
+      require('flash').setup {
+        labels = 'wqzvk1234567890[]()',
+        jump = {
+          nohlsearch = true,
+        },
+        modes = {
+          search = {
+            enabled = false,
+            highlight = {
+              backdrop = false,
+            },
+          },
+          char = {
+            jump_labels = true,
+            highlight = {
+              backdrop = false,
+            },
           },
         },
-        char = {
-          jump_labels = true,
-          highlight = {
-            backdrop = false,
-          },
-        },
-      },
+      }
+
+      -- Jump label - only set when system color scheme is light
+      if vim.o.background == 'light' then
+        vim.api.nvim_set_hl(0, 'FlashLabel', { bg = '#ffffff' })
+      end
+    end,
+    -- stylua: ignore
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
     },
-  -- stylua: ignore
-  keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-  },
   },
 }

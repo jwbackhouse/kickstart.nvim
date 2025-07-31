@@ -42,6 +42,7 @@ return {
   vim.keymap.set('n', '[h', '<cmd>Gitsigns prev_hunk<cr><cr>', { noremap = true, silent = true, desc = '[G]it previous hunk' }),
   vim.keymap.set('n', '<leader>gu', '<cmd>Gitsigns reset_hunk<cr>', { noremap = true, silent = true, desc = '[G]it [U]ndo hunk' }),
   vim.keymap.set('n', '<leader>gh', '<cmd>Gitsigns preview_hunk<cr>', { noremap = true, silent = true, desc = '[G]it Review [H]unk' }),
+  vim.keymap.set('n', '<leader>tb', '<cmd>Gitsigns toggle_current_line_blame<cr>', { noremap = true, silent = true, desc = '[T]oggle [B]lame' }),
   -- PRs
   vim.keymap.set('n', '<leader>gps', '<cmd>Octo review<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [S]tart review' }),
   vim.keymap.set('n', '<leader>gpf', '<cmd>Octo review submit<cr>', { noremap = true, silent = true, desc = '[G]it [P]R [F]inish review' }),

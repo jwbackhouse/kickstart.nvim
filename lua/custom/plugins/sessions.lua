@@ -1,5 +1,19 @@
 return {
   {
+    'folke/persistence.nvim',
+    event = 'BufReadPre',
+    opts = {
+      dir = vim.fn.stdpath 'state' .. '/sessions/',
+      options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
+      need = 0,
+      branch = true,
+      pre_save = function()
+        -- Save the current buffer before saving the session
+        vim.cmd 'silent! write'
+      end,
+    },
+  },
+  {
     'cbochs/grapple.nvim',
     dependencies = {
       { 'nvim-tree/nvim-web-devicons', lazy = true },

@@ -89,6 +89,7 @@ return {
         [[                    ]],
         [[  a  a  a  b  b  b  ]],
       }))
+      -- Choose from :NvimWebDeviconsHiTest for larger icons
       dashboard.section.buttons.val = {
         dashboard.button('e', ' ' .. ' New file', ':enew <BAR> startinsert <CR>'),
         dashboard.button(
@@ -99,7 +100,7 @@ return {
         dashboard.button('f', ' ' .. ' Find files', ':lua Snacks.picker.smart({}) <CR>'),
         dashboard.button('g', ' ' .. ' Find text', ':lua Snacks.picker.grep() <CR>'),
         dashboard.button('b', ' ' .. ' Git branches', ':lua Snacks.picker.git_branches({layout = "vscode"}) <CR>'),
-        dashboard.button('c', ' ' .. ' Config', ':e ~/.config/nvim/init.lua<CR>'),
+        dashboard.button('-', ' ' .. ' Explorer', ':Yazi <CR>'),
         dashboard.button('t', ' ' .. ' Typing', ':Typr <CR>'),
         dashboard.button('q', ' ' .. ' Quit', ':qa<CR>'),
       }
