@@ -1,5 +1,63 @@
 return {
   {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+    config = function()
+      vim.keymap.set('n', '<leader>fe', '<cmd>Oil<CR>', { desc = '[F]ile [E]xplorer' })
+      local oil = require 'oil'
+      oil.setup {
+        default_file_explorer = false,
+        delete_to_trash = true,
+        view_options = {
+          show_hidden = true,
+          case_insensitive = true,
+        },
+        git = {
+          mv = function()
+            return true
+          end,
+          add = function()
+            return true
+          end,
+          rm = function()
+            return true
+          end,
+        },
+      }
+    end,
+  },
+  {
+    'A7Lavinraj/fyler.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    keys = {
+      { '<leader>fy', '<cmd>Fyler<CR>', desc = '[F][Y]ler' },
+    },
+    opts = {
+      icon_provider = 'nvim-web-devicons',
+      default_file_explorer = true,
+      mappings = {
+        explorer = {
+          ['q'] = 'CloseView',
+          ['<CR>'] = 'Select',
+          ['<C-t>'] = 'SelectTab',
+          ['<C-v'] = 'SelectVSplit',
+          ['-'] = 'SelectSplit',
+          ['^'] = 'GotoParent',
+          ['='] = 'GotoCwd',
+          ['.'] = 'GotoNode',
+        },
+        confirm = {
+          ['y'] = 'Confirm',
+          ['n'] = 'Discard',
+        },
+      },
+    },
+  },
+  {
     'chrisgrieser/nvim-spider',
     lazy = true,
     opts = {
@@ -14,6 +72,11 @@ return {
   {
     'chrisgrieser/nvim-various-textobjs',
     event = 'VeryLazy',
+    keys = {
+      vim.keymap.set({ 'o', 'x' }, 'is', '<cmd>lua require("various-textobjs").subword("outer")<CR>'),
+      vim.keymap.set({ 'o', 'x' }, 'C', '<cmd>lua require("various-textobjs").toNextClosingBracket("outer")<CR>'),
+      vim.keymap.set({ 'o', 'x' }, 'Q', '<cmd>lua require("various-textobjs").toNextQuotationMark()<CR>'),
+    },
     opts = {
       keymaps = {
         useDefaults = true,

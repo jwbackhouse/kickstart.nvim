@@ -169,13 +169,6 @@ return {
         desc = '[G]it Log Picker [X]',
       },
       {
-        '<leader>fn',
-        function()
-          Snacks.picker.lines()
-        end,
-        desc = '[F]ind In L[I]nes',
-      },
-      {
         '<leader>gb',
         function()
           Snacks.picker.git_branches {
@@ -184,6 +177,13 @@ return {
           }
         end,
         desc = '[G]it [B]ranches',
+      },
+      {
+        '<leader>fi',
+        function()
+          Snacks.picker.lines()
+        end,
+        desc = '[F]ind In L[I]nes',
       },
       {
         '<leader>fn',
@@ -415,6 +415,20 @@ return {
         end,
       })
     end,
+  },
+  {
+    'dmtrKovalenko/fff.nvim',
+    build = 'cargo build --release',
+    opts = {},
+    keys = {
+      {
+        'ff',
+        function()
+          require('fff').find_files() -- or find_in_git_root() if you only want git files
+        end,
+        desc = 'Open file picker',
+      },
+    },
   },
   {
     'echasnovski/mini.nvim',

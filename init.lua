@@ -6,7 +6,7 @@
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
+vim.env.PATH = vim.env.PATH .. ':/opt/homebrew/bin:/usr/local/bin'
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -317,38 +317,6 @@ require('lazy').setup({
       },
     },
   },
-  {
-    'stevearc/oil.nvim',
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    -- Optional dependencies
-    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-    config = function()
-      vim.keymap.set('n', '<leader>fe', '<cmd>Oil<CR>', { desc = '[F]ile [E]xplorer' })
-      local oil = require 'oil'
-      oil.setup {
-        default_file_explorer = false,
-        delete_to_trash = true,
-        view_options = {
-          show_hidden = true,
-          case_insensitive = true,
-        },
-        git = {
-          mv = function()
-            return true
-          end,
-          add = function()
-            return true
-          end,
-          rm = function()
-            return true
-          end,
-        },
-      }
-    end,
-  },
-
   -- Original
   -- {
   --   'prettier/vim-prettier',
@@ -718,10 +686,11 @@ require('lazy').setup({
       -- end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        typescript = { 'prettierd', stop_after_first = false },
-        typescriptreact = { 'prettierd', stop_after_first = false },
-        javascript = { 'prettierd', 'prettier', stop_after_first = false },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = false },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         sql = { 'sql_formatter' },
       },
     },

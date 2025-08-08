@@ -97,7 +97,7 @@ return {
           '󰄉 ' .. ' Recent files',
           ":lua Snacks.picker.recent({layout = { preset = 'dropdown', layout = { width = 0.5 } }, formatters = { file = {truncate = 100 }}}) <CR>"
         ),
-        dashboard.button('f', ' ' .. ' Find files', ':lua Snacks.picker.smart({}) <CR>'),
+        dashboard.button('f', ' ' .. ' Find files', ':lua require("fff").find_files() <CR>'),
         dashboard.button('g', ' ' .. ' Find text', ':lua Snacks.picker.grep() <CR>'),
         dashboard.button('b', ' ' .. ' Git branches', ':lua Snacks.picker.git_branches({layout = "vscode"}) <CR>'),
         dashboard.button('-', ' ' .. ' Explorer', ':Yazi <CR>'),
